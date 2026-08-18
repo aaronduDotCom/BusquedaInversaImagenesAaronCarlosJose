@@ -1,0 +1,16 @@
+Model/
+    Imagen.java (vector)
+    ColeccionImagenes.java (lista doblemente enlazada)
+
+    Services/
+        BuscadorInverso.java (singleton)
+
+    Repositorios/
+        RepositorioImagenes.java (cargar/guardar imagenes desde disco (.png/.bin))
+
+
+Controller/
+    Controladora.java
+
+View/
+    Vista.java (Swing UI Designer)
