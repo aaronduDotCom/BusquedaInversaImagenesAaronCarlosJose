@@ -4,7 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 
-
+// recibe una imagen y la convierte para poder manipularla
+// falta sacarle los pixeles y guardarlos en un arreglo
 public class Imagen{
     private BufferedImage imagenBI;
 
