@@ -12,5 +12,5 @@ Model/
 Controller/
     Controladora.java
 
-View/
+View
     Vista.java (Swing UI Designer)
