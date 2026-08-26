@@ -12,16 +12,17 @@ public class Vector<T> {
     private int cant;
 
     public Vector(int c){
+        cant = c;
         objetos = new Object[cant];
         contador = 0;
-        cant = c;
     }
 
     public void insertar(T nuevo){
         if (contador == 0){
             objetos[0] = nuevo;
             contador++;
-        } else if (contador == cant-1) {
+            return;
+        } else if (contador == cant) {
             return;
         }
         objetos[contador] = nuevo;
