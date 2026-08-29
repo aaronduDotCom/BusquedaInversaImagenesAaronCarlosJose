@@ -1,9 +1,33 @@
+
+
 import Model.Services.Iterator;
 import Model.Vector;
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+
 
 public class Main {
 
     public static void main(String[] args) {
+
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            } catch (Exception ignored) {
+            }
+
+            JFrame window = new JFrame("Reservas");
+            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            window.setSize(800, 600);
+            window.setLocationRelativeTo(null);
+            window.setContentPane(new JPanel()); // pantalla vacía
+            window.setVisible(true);
+        });
+
 
         Vector<String> vector = new Vector<>(3);
 
