@@ -1,13 +1,8 @@
 
 
-import Model.Services.Iterator;
-import Model.Vector;
+import Model.Services.Estructuras.Iterator;
+import Model.Services.Estructuras.Vector;
 import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 
 
 public class Main {
