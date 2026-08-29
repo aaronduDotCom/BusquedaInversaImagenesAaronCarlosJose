@@ -1,5 +1,8 @@
 package Model;
 
+import Model.Services.Iterator;
+import Model.Services.VectorIterator;
+
 //Vector generico para uso en el proyecto de BusquedaInversa
 public class Vector<T> {
     // Guia de como implementar
@@ -12,18 +15,15 @@ public class Vector<T> {
     private int cant;
 
     public Vector(int c){
+        cant = c;
         objetos = new Object[cant];
         contador = 0;
-        cant = c;
     }
 
     public void insertar(T nuevo){
-        if (contador == 0){
-            objetos[0] = nuevo;
-            contador++;
-        } else if (contador == cant-1) {
+        if (contador == cant)
             return;
-        }
+
         objetos[contador] = nuevo;
         contador++;
     }
@@ -37,9 +37,7 @@ public class Vector<T> {
         return contador;
     }
 
-    public Object getIterador(){ //consultar al profe por esto
-        return null;
+    public Iterator<T> getIterador(){ //consultar al profe por esto
+        return new VectorIterator<>(this);
     }
-
-
 }
