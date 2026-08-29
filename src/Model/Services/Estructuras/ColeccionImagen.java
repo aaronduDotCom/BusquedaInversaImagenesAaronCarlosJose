@@ -1,4 +1,8 @@
-package Model;
+package Model.Services.Estructuras;
+
+
+// cambiar a coleccion generica
+
 // aqui va la lista doble
 // metodos para ordenamiento
 // uno tiene que ser malo, y otro tiene que ser bueno

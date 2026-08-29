@@ -1,4 +1,4 @@
-package Model.Services;
+package Model.Services.Busqueda;
 
 public class BuscadorInverso {
 }
