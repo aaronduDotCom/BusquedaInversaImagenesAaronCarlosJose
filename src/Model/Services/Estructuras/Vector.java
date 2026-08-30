@@ -1,7 +1,4 @@
-package Model;
-
-import Model.Services.Iterator;
-import Model.Services.VectorIterator;
+package Model.Services.Estructuras;
 
 //Vector generico para uso en el proyecto de BusquedaInversa
 public class Vector<T> {
