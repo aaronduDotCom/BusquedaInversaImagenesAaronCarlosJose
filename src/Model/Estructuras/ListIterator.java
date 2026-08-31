@@ -1,4 +1,4 @@
-package Model.Services.Estructuras;
+package Model.Estructuras;
 
 public class ListIterator<T> implements Iterator<T>{
     private Nodo<T> actual;
@@ -7,10 +7,12 @@ public class ListIterator<T> implements Iterator<T>{
         this.actual = actual;
     }
 
+    @Override
     public boolean hasNext(){
         return actual != null;
     }
 
+    @Override
     public T next(){
         if (!hasNext()){
             throw new IllegalStateException("No hay más elementos");

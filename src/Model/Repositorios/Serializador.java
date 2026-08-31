@@ -8,8 +8,8 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import Model.Services.Estructuras.Vector;
-import Model.Services.Estructuras.Nodo;
+import Model.Estructuras.Vector;
+import Model.Estructuras.Nodo;
 
 public class Serializador {
 

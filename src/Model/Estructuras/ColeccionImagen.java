@@ -1,4 +1,4 @@
-package Model.Services.Estructuras;
+package Model.Estructuras;
 
 import Model.Imagen.Imagen;
 

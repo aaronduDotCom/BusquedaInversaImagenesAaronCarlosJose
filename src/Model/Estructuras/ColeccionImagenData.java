@@ -1,4 +1,4 @@
-package Model.Services.Estructuras;
+package Model.Estructuras;
 
 // cambiar a coleccion generica
 import Model.Imagen.ImagenData;

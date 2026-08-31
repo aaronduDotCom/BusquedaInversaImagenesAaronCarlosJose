@@ -1,4 +1,4 @@
-package Model.Services.Estructuras;
+package Model.Estructuras;
 
 //Itera Vectores
 public class VectorIterator<T> implements Iterator<T> {

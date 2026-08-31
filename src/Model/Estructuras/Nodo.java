@@ -1,4 +1,4 @@
-package Model.Services.Estructuras;
+package Model.Estructuras;
 // nodo de la lista doble
 // doble puntero
 
