@@ -9,14 +9,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import Model.Services.Estructuras.Vector;
-import Model.Services.Estructuras.NodoImagen;
+import Model.Services.Estructuras.Nodo;
 
 public class Serializador {
 
-    public void guardar(NodoImagen<Vector<Object>> cabeza, String ruta) throws IOException {
+    public void guardar(Nodo<Vector<Object>> cabeza, String ruta) throws IOException {
         // Primero se cuenta cuantos nodos hay, recorriendo con getSiguiente()
         int total = 0;
-        NodoImagen<Vector<Object>> actual = cabeza;
+        Nodo<Vector<Object>> actual = cabeza;
         while (actual != null) {
             total++;
             actual = actual.getSiguiente();
@@ -44,9 +44,9 @@ public class Serializador {
         }
     }
 
-    public NodoImagen<Vector<Object>> cargar(String ruta) throws IOException {
-        NodoImagen<Vector<Object>> cabeza = null;
-        NodoImagen<Vector<Object>> cola = null;
+    public Nodo<Vector<Object>> cargar(String ruta) throws IOException {
+        Nodo<Vector<Object>> cabeza = null;
+        Nodo<Vector<Object>> cola = null;
 
         try (DataInputStream in = new DataInputStream(
                 new BufferedInputStream(new FileInputStream(ruta)))) {
@@ -62,7 +62,7 @@ public class Serializador {
                     datos.insertar((Object) in.readDouble());
                 }
 
-                NodoImagen<Vector<Object>> nuevo = new NodoImagen<>(datos);
+                Nodo<Vector<Object>> nuevo = new Nodo<>(datos);
                 if (cabeza == null) {
                     cabeza = nuevo;
                     cola = nuevo;
