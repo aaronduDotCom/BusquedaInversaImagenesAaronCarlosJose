@@ -1,9 +1,26 @@
-import Model.Services.Iterator;
-import Model.Vector;
-
 public class Main {
 
     public static void main(String[] args) {
+
+        //Prueba abstractores
+
+
+        /*
+
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+            } catch (Exception ignored) {
+            }
+
+            JFrame window = new JFrame("Reservas");
+            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            window.setSize(800, 600);
+            window.setLocationRelativeTo(null);
+            window.setContentPane(new JPanel()); // pantalla vacía
+            window.setVisible(true);
+        });
+
 
         Vector<String> vector = new Vector<>(3);
 
@@ -33,6 +50,6 @@ public class Main {
 
         System.out.println("Tamaño después de insertar de más: "
                 + vector.tamanno());
-
+        */
     }
 }

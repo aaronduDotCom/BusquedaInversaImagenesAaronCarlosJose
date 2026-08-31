@@ -1,7 +1,4 @@
-package Model;
-
-import Model.Services.Iterator;
-import Model.Services.VectorIterator;
+package Model.Estructuras;
 
 //Vector generico para uso en el proyecto de BusquedaInversa
 public class Vector<T> {
@@ -12,7 +9,7 @@ public class Vector<T> {
 
     private Object[] objetos;
     private int contador;
-    private int cant;
+    private final int cant;
 
     public Vector(int c){
         cant = c;
@@ -32,6 +29,8 @@ public class Vector<T> {
     public T getPos(int indice) {
         return (T) objetos[indice];
     }
+
+    public void setPos(int indice, T e) {objetos[indice] = e;}
 
     public int tamanno(){
         return contador;
