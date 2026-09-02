@@ -1,13 +1,11 @@
-
-
-import Model.Services.Estructuras.Iterator;
-import Model.Services.Estructuras.Vector;
-import javax.swing.*;
-
-
 public class Main {
 
     public static void main(String[] args) {
+
+        //Prueba abstractores
+
+
+        /*
 
         SwingUtilities.invokeLater(() -> {
             try {
@@ -52,6 +50,6 @@ public class Main {
 
         System.out.println("Tamaño después de insertar de más: "
                 + vector.tamanno());
-
+        */
     }
 }
