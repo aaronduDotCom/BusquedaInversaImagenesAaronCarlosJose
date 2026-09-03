@@ -8,9 +8,9 @@ Delegación de varas para el proyecto: Para el viernes 28 de agosto
 
 Delegación: 
 
-- Jose: crear colección generica, crear colección imagen e imagen data
-- Carlos: refactorizar o terminar de hacer serializador
-- Aaron: interfaz y abstractor de imagen
+- Jose: view, model y controller
+- Carlos: busqueda inversa y la clase resultado
+- Aaron: métodos de busqueda
 
 Hilo de acciones: 
 
