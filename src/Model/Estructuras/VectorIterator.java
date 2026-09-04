@@ -20,4 +20,10 @@ public class VectorIterator<T> implements Iterator<T> {
     public T next() {
         return vector.getPos(posicion++);
     }
+
+    @Override
+    public T actual () {
+        return null;
+    }
 }
+

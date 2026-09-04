@@ -21,4 +21,9 @@ public class ListIterator<T> implements Iterator<T>{
         actual = actual.getSiguiente();
         return valor;
     }
+
+    @Override
+    public T actual () {
+        return (T) actual;
+    }
 }
