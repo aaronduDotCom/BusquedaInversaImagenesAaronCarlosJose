@@ -80,12 +80,12 @@ public class ColeccionImagenData extends ColeccionAbstracta<ImagenData>{
         return lento;
     }
 
-    private Nodo<ImagenData> mezclar(Nodo<ImagenData> izquierda, Nodo<ImagenData> derecha){
+    /*private Nodo<ImagenData> mezclar(Nodo<ImagenData> izquierda, Nodo<ImagenData> derecha){
         Nodo<ImagenData> aux = new Nodo<>(null);
         Nodo<ImagenData> cola = aux;
 
         while (izquierda != null && derecha != null){
-            if (/*comparacion los valores que decidamos*/){
+            if (comparacion los valores que decidamos){
                 cola.setSiguiente(izquierda);
                 izquierda = izquierda.getSiguiente();
             }else {
@@ -102,7 +102,7 @@ public class ColeccionImagenData extends ColeccionAbstracta<ImagenData>{
         }
         return aux.getSiguiente();
     }
-
+*/
     private void reconstruirEnlaces(){
         Nodo<ImagenData> actual = cabeza;
         Nodo<ImagenData> anterior = null;

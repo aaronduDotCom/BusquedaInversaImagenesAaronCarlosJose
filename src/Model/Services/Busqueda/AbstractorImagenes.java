@@ -21,10 +21,10 @@ public class AbstractorImagenes {
 
         while (imagenes.getIterador().hasNext()){
             //creamos el vector de la nueva imagen data, a hc le pasamos la imagen y se crea el vector
-            Vector<Integer> hv = hc.calculaVector(imagenes.getIterador().next());
+            Vector<Integer> hv = hc.calculaVector(imagenes.getIterador().actual());
 
             //creamos la nueva imagen
-            ImagenData iD = new ImagenData(hv);
+            ImagenData iD = new ImagenData(hv,imagenes.getIterador().next().getId());
 
             //la insertamos en la lista de imagenesData
             cid.insertarInicio(iD);
