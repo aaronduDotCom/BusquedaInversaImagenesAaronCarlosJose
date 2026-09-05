@@ -1,78 +1,173 @@
-package Model.Repositorios;
-// se encarga de la logica de serializar y deserializar las imagenes de la lista doble
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import Model.Estructuras.Vector;
+package Model.Repositorios;
+import Model.Estructuras.Iterator;
 import Model.Estructuras.Nodo;
+import Model.Estructuras.Vector;
+import Model.Estructuras.ColeccionImagen;
+import Model.Imagen.Imagen;
+import Model.Services.Busqueda.HistogramaColor;
+
+import java.io.*;
 
 public class Serializador {
 
-    public void guardar(Nodo<Vector<Object>> cabeza, String ruta) throws IOException {
-        // Primero se cuenta cuantos nodos hay, recorriendo con getSiguiente()
-        int total = 0;
-        Nodo<Vector<Object>> actual = cabeza;
-        while (actual != null) {
-            total++;
-            actual = actual.getSiguiente();
-        }
+    public void guardar(ColeccionImagen coleccion, String ruta)
+            throws IOException {
 
         try (DataOutputStream out = new DataOutputStream(
-                new BufferedOutputStream(new FileOutputStream(ruta)))) {
+                new BufferedOutputStream(
+                        new FileOutputStream(ruta)))) {
 
-            out.writeInt(total);
-            actual = cabeza;
-            while (actual != null) {
-                Vector<Object> datos = actual.getValor();
+            // Primer iterador: contar las imágenes
+            Iterator<Imagen> iterador = coleccion.getIterador();
 
-                String rutaImagen = (String) datos.getPos(0);
-                out.writeUTF(rutaImagen);
+            int cantidad = 0;
 
-                int cantidadBins = datos.tamanno() - 1; // sin contar la ruta en pos 0
-                out.writeInt(cantidadBins);
-                for (int i = 1; i <= cantidadBins; i++) {
-                    out.writeDouble((Double) datos.getPos(i));
-                }
+            while (iterador.hasNext()) {
+                iterador.next();
+                cantidad++;
+            }
 
-                actual = actual.getSiguiente();
+            // Guardar cantidad de imágenes
+            out.writeInt(cantidad);
+
+            // Segundo iterador: guardar los datos
+            iterador = coleccion.getIterador();
+
+            while (iterador.hasNext()) {
+
+                Imagen imagen = iterador.next();
+
+                // Guardar nombre
+                out.writeUTF(imagen.getId().toString());
+
+
             }
         }
     }
+    public ColeccionImagen cargar(String ruta)
+            throws IOException {
 
-    public Nodo<Vector<Object>> cargar(String ruta) throws IOException {
-        Nodo<Vector<Object>> cabeza = null;
-        Nodo<Vector<Object>> cola = null;
+        ColeccionImagen coleccion =
+                new ColeccionImagen();
 
         try (DataInputStream in = new DataInputStream(
-                new BufferedInputStream(new FileInputStream(ruta)))) {
+                new BufferedInputStream(
+                        new FileInputStream(ruta)))) {
 
-            int total = in.readInt();
-            for (int i = 0; i < total; i++) {
-                String rutaImagen = in.readUTF();
-                int cantidadBins = in.readInt();
+            int cantidad = in.readInt();
 
-                Vector<Object> datos = new Vector<>(cantidadBins + 1);
-                datos.insertar(rutaImagen);
-                for (int j = 0; j < cantidadBins; j++) {
-                    datos.insertar((Object) in.readDouble());
+            for (int i = 0; i < cantidad; i++) {
+
+                String nombre = in.readUTF();
+
+                int tamanioVector = in.readInt();
+
+                Vector<Integer> vector =
+                        new Vector<>(tamanioVector);
+
+                for (int j = 0; j < tamanioVector; j++) {
+                    int valor = in.readInt();
+                    vector.insertar(valor);
                 }
 
-                Nodo<Vector<Object>> nuevo = new Nodo<>(datos);
-                if (cabeza == null) {
-                    cabeza = nuevo;
-                    cola = nuevo;
-                } else {
-                    cola.setSiguiente(nuevo);
-                    nuevo.setAnterior(cola);
-                    cola = nuevo;
-                }
+                Imagen imagenData =
+                        new Imagen(nombre, vector);
+
+                coleccion.insertarFinal(imagenData);
             }
         }
-        return cabeza;
+
+        return coleccion;
+    }
+
+    public void serializarCarpeta(String rutaCarpeta,
+                                  String rutaBin)
+            throws Exception {
+
+        File carpeta = new File(rutaCarpeta);
+
+        if (!carpeta.exists()) {
+            throw new FileNotFoundException(
+                    "La carpeta no existe: " + rutaCarpeta
+            );
+        }
+
+        if (!carpeta.isDirectory()) {
+            throw new IOException(
+                    "La ruta indicada no es una carpeta: "
+                            + rutaCarpeta
+            );
+        }
+
+        File[] archivos = carpeta.listFiles();
+
+        if (archivos == null) {
+            throw new IOException(
+                    "No se pudieron leer los archivos de la carpeta."
+            );
+        }
+
+        ColeccionImagen coleccion =
+                new ColeccionImagen();
+
+        HistogramaColor histograma =
+                new HistogramaColor();
+
+        for (File archivo : archivos) {
+
+            if (!archivo.getName()
+                    .toLowerCase()
+                    .endsWith(".png")) {
+                continue;
+            }
+
+            System.out.println(
+                    "Procesando: " + archivo.getName()
+            );
+
+            Imagen imagen =
+                    new Imagen(archivo);
+
+            Vector<Integer> vector =
+                    histograma.calculaVector(imagen);
+
+            imagen = new Imagen(
+                    archivo.getName(),
+                    vector
+            );
+
+            coleccion.insertarFinal(imagen);
+        }
+
+        guardar(coleccion, rutaBin);
+
+        System.out.println(
+                "Serialización terminada."
+        );
+
+        System.out.println(
+                "Archivo creado: " + rutaBin
+        );
+    }
+
+    public boolean existeBin(String ruta) {
+
+        File archivo = new File(ruta);
+
+        return archivo.exists()
+                && archivo.isFile();
+    }
+
+    public int cantidadImagenes(String ruta)
+            throws IOException {
+
+        try (DataInputStream in = new DataInputStream(
+                new BufferedInputStream(
+                        new FileInputStream(ruta)))) {
+
+            return in.readInt();
+        }
     }
 }
+

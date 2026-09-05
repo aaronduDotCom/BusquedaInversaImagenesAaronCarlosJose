@@ -4,4 +4,5 @@ package Model.Estructuras;
 public interface Iterator<T> {
     boolean hasNext();
     T next(); //devuelve el valor actual y camina una posición
+    T actual();
 }
