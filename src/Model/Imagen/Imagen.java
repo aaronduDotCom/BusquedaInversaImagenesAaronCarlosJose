@@ -13,13 +13,21 @@ public class Imagen{
     //private String id;
     private UUID id;
     private BufferedImage imagenBI;
+    private String ruta;
 
     public Imagen(File imagenPNG) throws Exception {
         imagenBI = ImageIO.read(imagenPNG);
         id = UUID.randomUUID();
+        ruta = imagenPNG.getAbsolutePath();
     }
 
     public Imagen(String name, Vector<Integer> vector) {
+    }
+
+    public String getRuta() {return ruta;}
+
+    public void setRuta(String ruta) {
+        this.ruta = ruta;
     }
 
     public BufferedImage getImagenBI() {

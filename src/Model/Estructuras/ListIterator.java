@@ -24,6 +24,7 @@ public class ListIterator<T> implements Iterator<T>{
 
     @Override
     public T actual () {
-        return (T) actual;
+        if (actual == null) return null;
+        return actual.getValor();
     }
 }

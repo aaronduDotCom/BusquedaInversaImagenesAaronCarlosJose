@@ -1,6 +1,26 @@
+import Model.Imagen.Imagen;
+import Presentation.Busqueda.Controller;
+import Presentation.Busqueda.Model;
+import Presentation.Busqueda.View;
+import javax.swing.*;
+
 public class Main {
 
     public static void main(String[] args) {
+        try {UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");}
+        catch (Exception ex) {};
+        SwingUtilities.invokeLater(() -> {
+
+            try {
+                View view = new View();
+                Model model = new Model();
+                Controller controller = new Controller(view, model);
+                view.setVisible(true);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "No se pudo iniciar la aplicación: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        });
 
         //Prueba abstractores
 

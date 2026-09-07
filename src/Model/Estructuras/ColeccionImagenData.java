@@ -56,7 +56,7 @@ public class ColeccionImagenData extends ColeccionAbstracta<ImagenData>{
         Nodo<ImagenData> izquierda = mergeSort(inicio);
         Nodo<ImagenData> derecha = mergeSort(siguienteAMitad);
 
-        return mezclar(izquierda, derecha);
+        return null; //mezclar(izquierda, derecha);
 
     }
 
