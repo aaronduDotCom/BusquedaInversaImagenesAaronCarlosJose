@@ -1,9 +1,7 @@
 package Model.Services.Similitud;
 
-import Model.Estructuras.ColeccionImagen;
-import Model.Estructuras.ColeccionImagenData;
+import Model.Repositorios.ColeccionImagenData;
 import Model.Estructuras.ColeccionResultadoImagenData;
-import Model.Estructuras.Vector;
 import Model.Imagen.ImagenData;
 import Model.Imagen.ResultadoImagenData;
 

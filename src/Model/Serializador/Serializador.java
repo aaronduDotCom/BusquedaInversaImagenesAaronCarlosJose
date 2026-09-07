@@ -1,11 +1,10 @@
 
-package Model.Repositorios;
+package Model.Serializador;
 import Model.Estructuras.Iterator;
-import Model.Estructuras.Nodo;
 import Model.Estructuras.Vector;
 import Model.Estructuras.ColeccionImagen;
 import Model.Imagen.Imagen;
-import Model.Services.Busqueda.HistogramaColor;
+import Model.Imagen.HistogramaColor;
 
 import java.io.*;
 

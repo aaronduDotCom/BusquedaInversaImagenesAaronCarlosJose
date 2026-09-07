@@ -3,7 +3,8 @@ package Model.Services.Busqueda;
 import Model.Estructuras.Vector;
 
 import Model.Estructuras.ColeccionImagen;
-import Model.Estructuras.ColeccionImagenData;
+import Model.Repositorios.ColeccionImagenData;
+import Model.Imagen.HistogramaColor;
 import Model.Imagen.ImagenData;
 
 // por cada imagen en coleccion crea una imagen data y lo mete a coleccion de imagenes data y la devuelve, se lo pasamos a buscador inverso utilizando los metodos

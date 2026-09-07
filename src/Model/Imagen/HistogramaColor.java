@@ -1,8 +1,7 @@
-package Model.Services.Busqueda;
+package Model.Imagen;
 
 import java.awt.Color;
 
-import Model.Imagen.Imagen;
 import Model.Estructuras.Vector;
 
 //saca la info de una imagen y devuelve los resultados para crear una imagenData
