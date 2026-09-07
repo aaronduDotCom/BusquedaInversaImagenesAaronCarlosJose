@@ -1,11 +1,11 @@
 package Model.Services.Similitud;
 
-import Model.Repositorios.ColeccionImagenData;
+import Model.Estructuras.ColeccionImagenData;
 import Model.Estructuras.ColeccionResultadoImagenData;
 import Model.Imagen.ImagenData;
 import Model.Imagen.ResultadoImagenData;
 
-public class SimilitudCoseno { //Entre mas pequeño mas cerca
+public class SimilitudCoseno { //Entre mas cerca de 1 mejor, -1 < x < 1
     public double simiCos(ImagenData a, ImagenData b){
         //     A * B
         //   ---------
@@ -48,9 +48,7 @@ public class SimilitudCoseno { //Entre mas pequeño mas cerca
 
             cID.getIterador().next();
         }
-
         cRID.ordenarMergeSort();
-
         return cRID;
     }
 }
