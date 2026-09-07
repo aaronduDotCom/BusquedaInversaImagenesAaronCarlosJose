@@ -25,6 +25,8 @@ Octavo paso: se lo pasamos a la controladora
 Noveno paso: la controladora se lo pasa al view para que lo muestre
 Decimo paso: guardarlo en binario
 
+terminar coleccion de imagendata y resultado imagen data, y mandar similitud coseno a revisar
+
 
 
 AbstractorImagen: define el vector, crea los bins, y mapea lo pixeles a los indices de los bins, y guarda el vector en imagendata, normaliza el histograma
