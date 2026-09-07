@@ -56,7 +56,7 @@ public class HistogramaColor {
                 int binB = evaluarPosBin(blue);
 
                 //localizamos el color en el vector caracteristico y lo contamos en el vector
-                int posVector = binR * 4*4 + binG * 4 + binB * 1;
+                int posVector = binR*4*4 + binG*4 + binB*1;
                 vc.setPos(posVector, vc.getPos(posVector) + 1);
             }
         }
