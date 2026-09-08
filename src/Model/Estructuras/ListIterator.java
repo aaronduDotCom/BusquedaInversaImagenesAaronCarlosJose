@@ -1,5 +1,7 @@
 package Model.Estructuras;
 
+import Model.Excepciones.FinalDeLista;
+
 public class ListIterator<T> implements Iterator<T>{
     private Nodo<T> actual;
 
@@ -15,7 +17,7 @@ public class ListIterator<T> implements Iterator<T>{
     @Override
     public T next(){
         if (!hasNext()){
-            throw new IllegalStateException("No hay más elementos");
+            throw new FinalDeLista("No hay más elementos");
         }
         T valor = actual.getValor();
         actual = actual.getSiguiente();
