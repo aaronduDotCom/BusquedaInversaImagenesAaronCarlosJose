@@ -1,54 +1,85 @@
 package Model.Services.Similitud;
 
-import Model.Estructuras.ColeccionImagenData;
-import Model.Estructuras.ColeccionResultadoImagenData;
 import Model.Imagen.ImagenData;
-import Model.Imagen.ResultadoImagenData;
 
-public class SimilitudCoseno { //Entre mas cerca de 1 mejor, -1 < x < 1
-    public double simiCos(ImagenData a, ImagenData b){
-        //     A * B
-        //   ---------
+public class SimilitudCoseno implements MetodoSimilitud {
+
+    @Override
+    public double calcular(ImagenData a, ImagenData b) {
+        // Entre más cerca de 1, mejor
+        //
+        //         A · B
+        //   ----------------
+        //    ||A|| * ||B||
+
+        validarImagenes(a, b);
+
+        // A · B
+        double productoEscalar = 0;
+
+        // Sumatorias necesarias para calcular
+        // las normas de A y B
+        double sumaCuadradosA = 0;
+        double sumaCuadradosB = 0;
+
+        for (int i = 0; i < 64; i++) {
+            double valorA = a.getVector().getPos(i);
+            double valorB = b.getVector().getPos(i);
+            // Producto escalar A · B
+            productoEscalar += valorA * valorB;
+            // ||A||²
+            sumaCuadradosA += valorA * valorA;
+            // ||B||²
+            sumaCuadradosB += valorB * valorB;
+        }
+
+        // ||A||
+        double normaA = Math.sqrt(sumaCuadradosA);
+
+        // ||B||
+        double normaB = Math.sqrt(sumaCuadradosB);
+
         // ||A|| * ||B||
+        double denominador = normaA * normaB;
 
-        // A * B
-        double aTimesb = 0;
-        for(int i = 0; i < 64; i++){
-            aTimesb  += a.getVector().getIterador().next() * a.getVector().getIterador().next();
+        //   ----------------
+
+        if (denominador == 0) {
+            throw new ArithmeticException(
+                    "No se puede calcular la similitud coseno "
+                            + "con un vector nulo"
+            );
         }
 
-        // ||A|| * ||B||
-        int sumA = 0;
-        for(int i = 0; i < 64; i++){
-            sumA += a.getVector().getIterador().next();
-        }
-        double normalA = Math.sqrt(sumA);
-
-        int sumB = 0;
-        for(int i = 0; i < 64; i++){
-            sumB += b.getVector().getIterador().next();
-        }
-        double normalB = Math.sqrt(sumB);
-
-        double normaATimesNormalB = normalA * normalB;
-
-        //   ---------
-
-        if(normaATimesNormalB != 0) {
-            return aTimesb / normaATimesNormalB;
-        } else {
-            throw new RuntimeException("Division by 0 in SimilitudCoseno");
-        }
+        return productoEscalar / denominador;
     }
 
-    public ColeccionResultadoImagenData resultadoSC(ImagenData iD, ColeccionImagenData cID){
-        ColeccionResultadoImagenData cRID = new ColeccionResultadoImagenData();
-        while(cID.getIterador().hasNext()){
-            cRID.insertarInicio(new ResultadoImagenData(cID.getIterador().actual(),simiCos(iD,cID.getIterador().actual())));
+    @Override
+    public boolean esAscendente() {
+        // Entre mayor sea el coseno,
+        // mayor es la similitud
+        return false;
+    }
 
-            cID.getIterador().next();
+    @Override
+    public String getNombre() {
+        return "Similitud Coseno";
+    }
+
+    private void validarImagenes(ImagenData a, ImagenData b) {
+        if (a == null || b == null) {
+            throw new IllegalArgumentException(
+                    "Las imágenes no pueden ser null"
+            );
         }
-        cRID.ordenarMergeSort();
-        return cRID;
+        if (a.getVector() == null || b.getVector() == null) {
+            throw new IllegalArgumentException("Los vectores no pueden ser null");
+        }
+        if (a.getVector().tamanno() != b.getVector().tamanno()) {
+            throw new IllegalArgumentException("Los vectores deben tener el mismo tamaño");
+        }
+        if (a.getVector().tamanno() != 64) {
+            throw new IllegalArgumentException("Los histogramas deben tener 64 posiciones");
+        }
     }
 }

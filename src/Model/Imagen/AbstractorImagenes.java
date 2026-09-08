@@ -1,11 +1,9 @@
-package Model.Services.Busqueda;
+package Model.Imagen;
 
 import Model.Estructuras.Vector;
-
 import Model.Estructuras.ColeccionImagen;
-import Model.Repositorios.ColeccionImagenData;
-import Model.Imagen.HistogramaColor;
-import Model.Imagen.ImagenData;
+import Model.Estructuras.ColeccionImagenData;
+import Model.Estructuras.Iterator;
 
 // por cada imagen en coleccion crea una imagen data y lo mete a coleccion de imagenes data y la devuelve, se lo pasamos a buscador inverso utilizando los metodos
 // histogramaColor
@@ -17,18 +15,22 @@ public class AbstractorImagenes {
         hc = new HistogramaColor();
     }
 
-    public ColeccionImagenData AbstractarImagenes(ColeccionImagen imagenes){
-        ColeccionImagenData cid = new ColeccionImagenData();
+    public ColeccionImagenData abstractarImagenes(ColeccionImagen imagenes){
 
-        while (imagenes.getIterador().hasNext()){
+        ColeccionImagenData cid = new ColeccionImagenData();
+        Iterator<Imagen> iterador = imagenes.getIterador();
+
+        while (iterador.hasNext()){
+            Imagen imagen = iterador.next();
             //creamos el vector de la nueva imagen data, a hc le pasamos la imagen y se crea el vector
-            Vector<Integer> hv = hc.calculaVector(imagenes.getIterador().actual());
+            Vector<Double> hv = hc.calculaVector(imagen);
 
             //creamos la nueva imagen
-            ImagenData iD = new ImagenData(hv,imagenes.getIterador().next().getId());
+            ImagenData iD = new ImagenData(hv, imagen.getId(), imagen.getRuta());
+
 
             //la insertamos en la lista de imagenesData
-            cid.insertarInicio(iD);
+            cid.insertarFinal(iD);
         }
 
         return cid;

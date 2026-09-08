@@ -22,8 +22,8 @@ public class HistogramaColor {
     }
 
     //Este metodo se usa una vez por imagen
-    public Vector<Integer> calculaVector(Imagen imagen){
-        Vector<Integer> vc = new Vector<>(64);
+    public Vector<Double> calculaVector(Imagen imagen){
+        Vector<Integer> vc = new Vector<>(64); // vs = vector conteos
         //Inicializamos en 0s
         for (int i = 0; i < 64; i++) {
             vc.insertar(0);
@@ -41,7 +41,7 @@ public class HistogramaColor {
         for (int i = 0; i < height; i++){
             for (int j = 0; j < width; j++){
                 // Get pixel color (Equivalent to: bitmap.GetPixel(x, y))
-                int rgb = imagen.getImagenBI().getRGB(i, j);
+                int rgb = imagen.getImagenBI().getRGB(i, j); // posible inversion de coordenadas
                 Color color = new Color(rgb, true); // true handles alpha channel
 
                 // Extraemos canal de color
@@ -62,13 +62,13 @@ public class HistogramaColor {
 
         //Creamos un nuevo vector pero es la version normalizada del anterior
         Vector<Double> vn = new Vector<>(64);
-        int totalPixeles = width * height;
+        double totalPixeles = (double)width * height;
 
         for (int i = 0; i < 64; i++) {
-            int valor = vc.getPos(i);
+            double valor = (double)vc.getPos(i);
             vn.insertar(valor/totalPixeles + 0.0);
         }
-
-        return vc;
+        // vector normalizado, tiene que ser double
+        return vn;
     }
 }

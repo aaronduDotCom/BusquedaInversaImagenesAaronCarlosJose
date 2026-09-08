@@ -21,14 +21,8 @@ public class Imagen{
         ruta = imagenPNG.getAbsolutePath();
     }
 
-    public Imagen(String name, Vector<Integer> vector) {
-    }
 
     public String getRuta() {return ruta;}
-
-    public void setRuta(String ruta) {
-        this.ruta = ruta;
-    }
 
     public BufferedImage getImagenBI() {
         return imagenBI;

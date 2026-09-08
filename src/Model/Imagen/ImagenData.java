@@ -3,16 +3,26 @@ package Model.Imagen;
 // tiene el vector y todo....
 
 import Model.Estructuras.Vector;
-
 import java.util.UUID;
 
 public class ImagenData {
     private UUID id;
-    private Vector<Integer> vector;
-    public ImagenData(Vector<Integer> v,UUID otra){
-        vector = v;
-        id = otra;
+    private Vector<Double> vector;
+    private String ruta;
+
+    public ImagenData(Vector<Double> vector, UUID id, String ruta) {
+        this.vector = vector;
+        this.id = id;
+        this.ruta = ruta;
     }
 
-    public Vector<Integer> getVector() {return vector;}
+    public UUID getId() {
+        return id;
+    }
+
+    public String getRuta() {
+        return ruta;
+    }
+
+    public Vector<Double> getVector() {return vector;}
 }

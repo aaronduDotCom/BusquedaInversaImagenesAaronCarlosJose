@@ -79,7 +79,7 @@ public class View extends JFrame implements PropertyChangeListener {
                 results.removeAll();
                 Iterator<Resultado> iterador = model.getResults().getIterador();
                 while (iterador.hasNext()){
-                    informationLabel.setText("<html>" + "Método: " + model.getMethod() + "<br>" + "Resultados encontrados: " + model.getResults().contador() + "</html>");
+                    informationLabel.setText("<html>" + "Método: " + model.getMethod() + "<br>" + "Resultados encontrados: " + model.getResults().tamano() + "</html>");
                 }
                 break;
         }

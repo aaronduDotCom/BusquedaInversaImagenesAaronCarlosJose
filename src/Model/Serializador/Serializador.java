@@ -2,77 +2,68 @@
 package Model.Serializador;
 import Model.Estructuras.Iterator;
 import Model.Estructuras.Vector;
-import Model.Estructuras.ColeccionImagen;
+import Model.Estructuras.ColeccionImagenData;
 import Model.Imagen.Imagen;
 import Model.Imagen.HistogramaColor;
-
+import Model.Imagen.ImagenData;
 import java.io.*;
+import java.util.UUID;
 
 public class Serializador {
+    private static final int TAMANNO_HISTOGRAMA = 64;
 
-    public void guardar(ColeccionImagen coleccion, String ruta)
-            throws IOException {
+    public void guardar(ColeccionImagenData coleccion, String ruta) throws IOException {
+        try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ruta)))) {
 
-        try (DataOutputStream out = new DataOutputStream(
-                new BufferedOutputStream(
-                        new FileOutputStream(ruta)))) {
-
+            out.writeInt(coleccion.tamano());
             // Primer iterador: contar las imágenes
-            Iterator<Imagen> iterador = coleccion.getIterador();
+            Iterator<ImagenData> iterador = coleccion.getIterador();
 
             int cantidad = 0;
 
             while (iterador.hasNext()) {
-                iterador.next();
-                cantidad++;
+                ImagenData imagenData = iterador.next();
+                // Guardar UUID
+                out.writeUTF(imagenData.getId().toString());
+                // Guardar ruta de la imagen
+                out.writeUTF(imagenData.getRuta());
+                // Guardar tamaño del vector
+                out.writeInt(imagenData.getVector().tamanno());
+                Vector<Double> vector = imagenData.getVector();
+                out.writeInt(vector.tamanno());
+                Iterator<Double> iteradorVector = vector.getIterador();
+                while (iteradorVector.hasNext()) {
+                    out.writeDouble(iteradorVector.next());
+                }
             }
-
-            // Guardar cantidad de imágenes
-            out.writeInt(cantidad);
-
-            // Segundo iterador: guardar los datos
-            iterador = coleccion.getIterador();
-
-            while (iterador.hasNext()) {
-
-                Imagen imagen = iterador.next();
-
-                // Guardar nombre
-                out.writeUTF(imagen.getId().toString());
-
 
             }
         }
-    }
-    public ColeccionImagen cargar(String ruta)
-            throws IOException {
 
-        ColeccionImagen coleccion =
-                new ColeccionImagen();
+    public ColeccionImagenData cargar(String ruta) throws IOException {
 
-        try (DataInputStream in = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(ruta)))) {
+        ColeccionImagenData coleccion = new ColeccionImagenData();
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(ruta)))) {
 
-            int cantidad = in.readInt();
+            int cantidadImagenes = in.readInt();
 
-            for (int i = 0; i < cantidad; i++) {
+            for (int i = 0; i < cantidadImagenes; i++) {
 
-                String nombre = in.readUTF();
+                UUID id = UUID.fromString(in.readUTF());
 
-                int tamanioVector = in.readInt();
-
-                Vector<Integer> vector =
-                        new Vector<>(tamanioVector);
-
-                for (int j = 0; j < tamanioVector; j++) {
-                    int valor = in.readInt();
-                    vector.insertar(valor);
+                String rutaImagen = in.readUTF();
+                int tamannoVector = in.readInt();
+                if (tamannoVector != TAMANNO_HISTOGRAMA) {
+                    throw new IOException("El histograma almacenado debe tener " + TAMANNO_HISTOGRAMA + " posiciones");
                 }
+                Vector<Double> vector = new Vector<>(tamannoVector);
+                for (int j = 0; j < tamannoVector; j++) {
 
-                Imagen imagenData =
-                        new Imagen(nombre, vector);
+                    vector.insertar(in.readDouble());
+                }
+                ImagenData imagenData =
 
+                new ImagenData(vector, id, rutaImagen);
                 coleccion.insertarFinal(imagenData);
             }
         }
@@ -80,93 +71,101 @@ public class Serializador {
         return coleccion;
     }
 
-    public void serializarCarpeta(String rutaCarpeta,
-                                  String rutaBin)
-            throws Exception {
+    public ColeccionImagenData procesarCarpeta(String rutaCarpeta) throws Exception {
+
+        if (rutaCarpeta == null || rutaCarpeta.isBlank()) {
+            throw new IllegalArgumentException("La ruta de la carpeta no puede estar vacía");
+        }
 
         File carpeta = new File(rutaCarpeta);
 
         if (!carpeta.exists()) {
-            throw new FileNotFoundException(
-                    "La carpeta no existe: " + rutaCarpeta
-            );
+            throw new FileNotFoundException("La carpeta no existe: " + rutaCarpeta);
         }
 
         if (!carpeta.isDirectory()) {
-            throw new IOException(
-                    "La ruta indicada no es una carpeta: "
-                            + rutaCarpeta
-            );
+            throw new IOException("La ruta seleccionada no corresponde a una carpeta");
         }
 
         File[] archivos = carpeta.listFiles();
-
         if (archivos == null) {
-            throw new IOException(
-                    "No se pudieron leer los archivos de la carpeta."
-            );
+            throw new IOException("No se pudieron leer los archivos de la carpeta");
         }
 
-        ColeccionImagen coleccion =
-                new ColeccionImagen();
-
-        HistogramaColor histograma =
-                new HistogramaColor();
+        ColeccionImagenData coleccion = new ColeccionImagenData();
+        HistogramaColor histogramaColor = new HistogramaColor();
 
         for (File archivo : archivos) {
 
-            if (!archivo.getName()
-                    .toLowerCase()
-                    .endsWith(".png")) {
+            if (!archivo.isFile()) {
                 continue;
             }
 
-            System.out.println(
-                    "Procesando: " + archivo.getName()
-            );
+            if (!esArchivoImagen(archivo)) {
+                continue;
+            }
 
-            Imagen imagen =
-                    new Imagen(archivo);
-
-            Vector<Integer> vector =
-                    histograma.calculaVector(imagen);
-
-            imagen = new Imagen(
-                    archivo.getName(),
-                    vector
-            );
-
-            coleccion.insertarFinal(imagen);
+            try {
+                Imagen imagen = new Imagen(archivo);
+                Vector<Double> histograma = histogramaColor.calculaVector(imagen);
+                ImagenData imagenData = new ImagenData(histograma, imagen.getId(), imagen.getRuta());
+                coleccion.insertarFinal(imagenData);
+            } catch (IOException e) {
+            }
         }
 
-        guardar(coleccion, rutaBin);
-
-        System.out.println(
-                "Serialización terminada."
-        );
-
-        System.out.println(
-                "Archivo creado: " + rutaBin
-        );
+        return coleccion;
     }
 
-    public boolean existeBin(String ruta) {
+    public ColeccionImagenData serializarCarpeta(String rutaCarpeta, String rutaArchivoBinario
+    ) throws Exception {
 
-        File archivo = new File(ruta);
+        ColeccionImagenData coleccion = procesarCarpeta(rutaCarpeta);
+        if (coleccion.tamano() == 0) {
+            throw new IOException("La carpeta no contiene imágenes válidas");
+        }
 
-        return archivo.exists()
-                && archivo.isFile();
+        guardar(coleccion, rutaArchivoBinario);
+
+        return coleccion;
     }
 
-    public int cantidadImagenes(String ruta)
-            throws IOException {
+    private boolean esArchivoImagen(File archivo) {
+        String nombre = archivo.getName().toLowerCase();
 
-        try (DataInputStream in = new DataInputStream(
-                new BufferedInputStream(
-                        new FileInputStream(ruta)))) {
+        return nombre.endsWith(".png")
+                || nombre.endsWith(".jpg")
+                || nombre.endsWith(".jpeg")
+                || nombre.endsWith(".bmp");
+    }
 
-            return in.readInt();
+
+    public boolean existeBin(String rutaArchivo) {
+
+        if (rutaArchivo == null || rutaArchivo.isBlank()) {
+            return false;
+        }
+        File archivo = new File(rutaArchivo);
+        return archivo.exists() && archivo.isFile();
+    }
+
+    public int cantidadImagenes(
+            String rutaArchivo
+    ) throws IOException {
+        if (rutaArchivo == null || rutaArchivo.isBlank()) {
+            throw new IllegalArgumentException("La ruta del archivo no puede estar vacía");
+        }
+
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(rutaArchivo)))) {
+            int cantidad = in.readInt();
+            if (cantidad < 0) {
+                throw new IOException("Cantidad de imágenes inválida");
+            }
+
+            return cantidad;
         }
     }
 }
+
+
 

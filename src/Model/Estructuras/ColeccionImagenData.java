@@ -1,7 +1,6 @@
-package Model.Repositorios;
+package Model.Estructuras;
 
 // cambiar a coleccion generica
-import Model.Estructuras.ColeccionAbstracta;
 import Model.Imagen.ImagenData;
 
 public class ColeccionImagenData extends ColeccionAbstracta<ImagenData> {

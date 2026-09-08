@@ -8,4 +8,7 @@ public class ResultadoBusqueda extends ColeccionAbstracta<Resultado>{
     public void agregar(Resultado resultado){
         insertarFinal(resultado);
     }
+    // ascendente
+    // true : menor a mayor, para Euclidiana
+    // false : mayor a menor, para las otras dos
 }
