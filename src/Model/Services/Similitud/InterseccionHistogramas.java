@@ -17,9 +17,7 @@ public class InterseccionHistogramas implements MetodoSimilitud {
 
         for (int i = 0; i < 64; i++) {
             // Sacamos el mínimo de ambos histogramas
-            resultado += Math.min(
-                    a.getVector().getPos(i),
-                    b.getVector().getPos(i)
+            resultado += Math.min(a.getVector().getPos(i), b.getVector().getPos(i)
             );
         }
 
