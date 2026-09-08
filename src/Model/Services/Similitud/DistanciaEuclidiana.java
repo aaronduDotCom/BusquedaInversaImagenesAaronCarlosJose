@@ -1,5 +1,6 @@
 package Model.Services.Similitud;
 
+import Model.Excepciones.ValidacionImagen;
 import Model.Imagen.ImagenData;
 
 public class DistanciaEuclidiana implements MetodoSimilitud {
@@ -17,7 +18,9 @@ public class DistanciaEuclidiana implements MetodoSimilitud {
         double resultado = 0;
 
         for (int i = 0; i < 64; i++) {
-            double diferencia = a.getVector().getPos(i) - b.getVector().getPos(i);
+            double diferencia =
+                    a.getVector().getPos(i)
+                            - b.getVector().getPos(i);
 
             // Potencia
             resultado += diferencia * diferencia;
@@ -43,18 +46,21 @@ public class DistanciaEuclidiana implements MetodoSimilitud {
     // esto hay que correrlo a una clase excepcion propia, pero por ahora lo dejo asi
     private void validarImagenes(ImagenData a, ImagenData b) {
         if (a == null || b == null) {
-            throw new IllegalArgumentException("Las imágenes no pueden ser null");
+            throw new ValidacionImagen(
+                    "Las imágenes no pueden ser null"
+            );
         }
+
         if (a.getVector() == null || b.getVector() == null) {
-            throw new IllegalArgumentException("Los vectores no pueden ser null");
+            throw new ValidacionImagen("Los vectores no pueden ser null");
         }
 
         if (a.getVector().tamanno() != b.getVector().tamanno()) {
-            throw new IllegalArgumentException("Los vectores deben tener el mismo tamaño");
+            throw new ValidacionImagen("Los vectores deben tener el mismo tamaño");
         }
 
         if (a.getVector().tamanno() != 64) {
-            throw new IllegalArgumentException("Los histogramas deben tener 64 posiciones");
+            throw new ValidacionImagen("Los histogramas deben tener 64 posiciones");
         }
     }
 }

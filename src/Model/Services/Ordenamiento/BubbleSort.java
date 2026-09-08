@@ -3,6 +3,7 @@ package Model.Services.Ordenamiento;
 import Model.Estructuras.Iterator;
 import Model.Estructuras.ResultadoBusqueda;
 import Model.Estructuras.Vector;
+import Model.Excepciones.ResultadoNulo;
 import Model.Services.Busqueda.Resultado;
 
 public class BubbleSort implements MetodoOrdenamiento {
@@ -10,7 +11,7 @@ public class BubbleSort implements MetodoOrdenamiento {
     @Override
     public ResultadoBusqueda ordenar(ResultadoBusqueda resultados, boolean ascendente) {
         if (resultados == null) {
-            throw new IllegalArgumentException("La colección de resultados no puede ser null");
+            throw new ResultadoNulo("La colección de resultados no puede ser null");
         }
 
         Vector<Resultado> vector = new Vector<>(resultados.tamano());
