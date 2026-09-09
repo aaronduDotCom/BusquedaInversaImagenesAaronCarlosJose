@@ -1,8 +1,8 @@
-package Presentation.Busqueda.Resultado;
+package Presentation.Busqueda.PantallaResultado;
 import Model.Estructuras.ResultadoBusqueda;
 import Model.Imagen.Imagen;
 import Presentation.AbstractModel;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class Model extends AbstractModel{

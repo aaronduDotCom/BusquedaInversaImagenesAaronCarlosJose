@@ -1,11 +1,13 @@
 package Presentation.Busqueda;
 
+import Model.Estructuras.ResultadoBusqueda;
+import Model.Services.Busqueda.BuscadorInverso;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -17,12 +19,14 @@ public class View extends JFrame implements PropertyChangeListener {
     private JLabel imagePreview;
     private JLabel imageRoute;
     private JButton seleccionarImagenButton;
+    private JComboBox<String> comboBoxOrdenamiento;
+    private JComboBox<String> comboBoxBins;
 
     public View() {
         setTitle("Búsqueda Inversa de Imágenes");
         setContentPane(contentPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 500);
+        setSize(600, 600);
         setLocationRelativeTo(null);
 
         imagePreview.setHorizontalAlignment(SwingConstants.CENTER);
@@ -53,11 +57,16 @@ public class View extends JFrame implements PropertyChangeListener {
         buscarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                int bins = Integer.parseInt(comboBoxBins.getSelectedItem().toString());
+                if (bins != 64) {
+                    JOptionPane.showMessageDialog(contentPanel, "Actualmente solo se soporta la búsqueda con 64 bins.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
                 try {
                     controller.search();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(contentPanel, ex.getMessage(), "Información", JOptionPane.INFORMATION_MESSAGE
-                    );
+                    JOptionPane.showMessageDialog(contentPanel, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
                 }
             }
         });
@@ -80,6 +89,8 @@ public class View extends JFrame implements PropertyChangeListener {
     public JComboBox<String> getSearchMethodcomboBox() {
         return searchMethodcomboBox;
     }
+    public JComboBox<String> getComboBoxOrdenamiento() {return comboBoxOrdenamiento;}
+    public JComboBox<String> getComboBoxBins() {return comboBoxBins;}
     public JLabel getImagePreview() {
         return imagePreview;
     }

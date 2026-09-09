@@ -18,6 +18,8 @@ public class Controller {
         view.setModel(model);
 
         cargarMetodosBusqueda();
+        cargarMetodosOrdenamiento();
+        cargarBins();
     }
 
     private void cargarMetodosBusqueda() {
@@ -26,6 +28,25 @@ public class Controller {
         view.getSearchMethodcomboBox().addItem("Similitud Coseno");
         view.getSearchMethodcomboBox().addItem("Similitud Euclidiana");
         view.getSearchMethodcomboBox().addItem("Intersección de Histogramas");
+    }
+
+    private void cargarMetodosOrdenamiento(){
+        view.getComboBoxOrdenamiento().removeAllItems();
+        view.getComboBoxOrdenamiento().addItem("Bubble Sort");
+        view.getComboBoxOrdenamiento().addItem("Merge Sort");
+    }
+
+    public void cargarBins(){
+        view.getComboBoxBins().removeAllItems();
+        view.getComboBoxBins().addItem("2");
+        view.getComboBoxBins().addItem("4");
+        view.getComboBoxBins().addItem("8");
+        view.getComboBoxBins().addItem("16");
+        view.getComboBoxBins().addItem("32");
+        view.getComboBoxBins().addItem("64");
+        view.getComboBoxBins().addItem("128");
+        view.getComboBoxBins().addItem("256");
+
     }
 
     public void selectImage(String path) throws Exception {

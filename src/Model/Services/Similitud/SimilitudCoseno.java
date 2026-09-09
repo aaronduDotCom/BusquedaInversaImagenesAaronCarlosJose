@@ -46,10 +46,7 @@ public class SimilitudCoseno implements MetodoSimilitud {
         //   ----------------
 
         if (denominador == 0) {
-            throw new ArithmeticException(
-                    "No se puede calcular la similitud coseno "
-                            + "con un vector nulo"
-            );
+            throw new ArithmeticException("No se puede calcular la similitud coseno " + "con un vector nulo");
         }
 
         return productoEscalar / denominador;
@@ -69,9 +66,7 @@ public class SimilitudCoseno implements MetodoSimilitud {
 
     private void validarImagenes(ImagenData a, ImagenData b) {
         if (a == null || b == null) {
-            throw new ValidacionImagen(
-                    "Las imágenes no pueden ser null"
-            );
+            throw new ValidacionImagen("Las imágenes no pueden ser null");
         }
         if (a.getVector() == null || b.getVector() == null) {
             throw new ValidacionImagen("Los vectores no pueden ser null");

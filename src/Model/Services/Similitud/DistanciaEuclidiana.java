@@ -46,9 +46,7 @@ public class DistanciaEuclidiana implements MetodoSimilitud {
     // esto hay que correrlo a una clase excepcion propia, pero por ahora lo dejo asi
     private void validarImagenes(ImagenData a, ImagenData b) {
         if (a == null || b == null) {
-            throw new ValidacionImagen(
-                    "Las imágenes no pueden ser null"
-            );
+            throw new ValidacionImagen("Las imágenes no pueden ser null");
         }
 
         if (a.getVector() == null || b.getVector() == null) {

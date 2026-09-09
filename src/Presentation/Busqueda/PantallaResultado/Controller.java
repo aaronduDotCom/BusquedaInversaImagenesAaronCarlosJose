@@ -1,4 +1,4 @@
-package Presentation.Busqueda.Resultado;
+package Presentation.Busqueda.PantallaResultado;
 import Model.Imagen.Imagen;
 import Model.Estructuras.ResultadoBusqueda;
 

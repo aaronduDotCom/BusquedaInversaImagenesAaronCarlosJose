@@ -1,4 +1,4 @@
-package Presentation.Busqueda.Resultado;
+package Presentation.Busqueda.PantallaResultado;
 
 import Model.Services.Busqueda.Resultado;
 import Model.Estructuras.Iterator;
@@ -76,11 +76,17 @@ public class View extends JFrame implements PropertyChangeListener {
                 informationLabel.setText("Método: " + model.getMethod());
                 break;
             case Model.RESULTS:
+
                 results.removeAll();
+                informationLabel.setText("<html>" + "Método: " + model.getMethod() + "<br>" + "Resultados encontrados: " + model.getResults().tamano() + "</html>");
                 Iterator<Resultado> iterador = model.getResults().getIterador();
-                while (iterador.hasNext()){
-                    informationLabel.setText("<html>" + "Método: " + model.getMethod() + "<br>" + "Resultados encontrados: " + model.getResults().tamano() + "</html>");
+                while (iterador.hasNext()) {
+                    Resultado resultado = iterador.next();
+                    //JPanel tarjeta = crearTarjeta(resultado);
+                    //results.add(tarjeta);
                 }
+                results.revalidate();
+                results.repaint();
                 break;
         }
 
