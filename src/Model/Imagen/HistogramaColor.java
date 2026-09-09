@@ -42,7 +42,7 @@ public class HistogramaColor {
         for (int i = 0; i < height; i++){
             for (int j = 0; j < width; j++){
                 // Get pixel color (Equivalent to: bitmap.GetPixel(x, y))
-                int rgb = imagen.getImagenBI().getRGB(i, j); // posible inversion de coordenadas
+                int rgb = imagen.getImagenBI().getRGB(j, i); // posible inversion de coordenadas
                 Color color = new Color(rgb, true); // true handles alpha channel
 
                 // Extraemos canal de color

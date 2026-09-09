@@ -22,8 +22,19 @@ public class Main {
 
             File carpetaSeleccionada = selector.getSelectedFile();
             Serializador serializador = new Serializador();
-            ColeccionImagenData coleccion = serializador.procesarCarpeta(carpetaSeleccionada.getAbsolutePath());
+            String rutaBin = new File(carpetaSeleccionada, "banco_indice.bin").getAbsolutePath();
+
+            ColeccionImagenData coleccion;
+            if (serializador.existeBin(rutaBin)) {
+                System.out.println("CACHE HIT: cargando desde " + rutaBin);
+                coleccion = serializador.cargar(rutaBin);
+            } else {
+                System.out.println("CACHE MISS: reprocesando carpeta completa");
+                coleccion = serializador.serializarCarpeta(carpetaSeleccionada.getAbsolutePath(), rutaBin);
+            }
             RepoImagenes.getInstance().reemplazar(coleccion);
+            // ColeccionImagenData coleccion = serializador.procesarCarpeta(carpetaSeleccionada.getAbsolutePath());
+            // RepoImagenes.getInstance().reemplazar(coleccion);
             Presentation.Busqueda.Model model = new Presentation.Busqueda.Model();
             Presentation.Busqueda.View view = new Presentation.Busqueda.View();
             Presentation.Busqueda.Controller controller = new Presentation.Busqueda.Controller(view, model);

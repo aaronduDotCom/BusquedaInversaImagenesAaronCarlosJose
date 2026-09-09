@@ -23,22 +23,20 @@ public class Serializador {
 
             while (iterador.hasNext()) {
                 ImagenData imagenData = iterador.next();
+                Vector<Double> vector = imagenData.getVector();
                 // Guardar UUID
                 out.writeUTF(imagenData.getId().toString());
                 // Guardar ruta de la imagen
                 out.writeUTF(imagenData.getRuta());
-                // Guardar tamaño del vector
-                out.writeInt(imagenData.getVector().tamanno());
-                Vector<Double> vector = imagenData.getVector();
+                // Guardar tamaño del vector (una sola vez)
                 out.writeInt(vector.tamanno());
                 Iterator<Double> iteradorVector = vector.getIterador();
                 while (iteradorVector.hasNext()) {
                     out.writeDouble(iteradorVector.next());
                 }
             }
-
-            }
         }
+    }
 
     public ColeccionImagenData cargar(String ruta) throws IOException {
 

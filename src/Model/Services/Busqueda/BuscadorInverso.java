@@ -12,18 +12,13 @@ public class BuscadorInverso {
     private final MetodoSimilitud metodoSimilitud;
     private final MetodoOrdenamiento metodoOrdenamiento;
 
-    public BuscadorInverso(
-            MetodoSimilitud metodoSimilitud,
-            MetodoOrdenamiento metodoOrdenamiento) {
+    public BuscadorInverso(MetodoSimilitud metodoSimilitud, MetodoOrdenamiento metodoOrdenamiento) {
 
         this.metodoSimilitud = metodoSimilitud;
         this.metodoOrdenamiento = metodoOrdenamiento;
     }
 
-    public ResultadoBusqueda buscar(
-            ImagenData imagenConsulta,
-            ColeccionImagenData coleccion,
-            int cantidadResultados) {
+    public ResultadoBusqueda buscar(ImagenData imagenConsulta, ColeccionImagenData coleccion, int cantidadResultados) {
 
         if (cantidadResultados > coleccion.tamano()) {
             cantidadResultados = coleccion.tamano();
