@@ -3,6 +3,7 @@ package Model.Imagen;
 import java.awt.Color;
 
 import Model.Estructuras.Vector;
+import Model.Excepciones.CodigoColorInvalido;
 
 //saca la info de una imagen y devuelve los resultados para crear una imagenData
 
@@ -17,7 +18,7 @@ public class HistogramaColor {
         }else if(color >= 192 && color <= 255){
             return 3;
         } else {
-            throw new RuntimeException("codigo color invalido");
+            throw new CodigoColorInvalido("codigo color invalido");
         }
     }
 

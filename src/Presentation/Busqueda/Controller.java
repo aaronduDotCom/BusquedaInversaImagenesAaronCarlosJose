@@ -1,5 +1,7 @@
 package Presentation.Busqueda;
 
+import Model.Excepciones.MetodoBusquedaInvalido;
+import Model.Excepciones.ValidacionImagen;
 import Model.Imagen.Imagen;
 import java.io.File;
 
@@ -31,7 +33,7 @@ public class Controller {
         Imagen selectedImage = new Imagen(imageFile);
 
         if (selectedImage.getImagenBI() == null) {
-            throw new Exception("El archivo seleccionado no contiene una imagen válida");
+            throw new ValidacionImagen("El archivo seleccionado no contiene una imagen válida");
         }
 
         model.setCurrent(selectedImage);
@@ -39,12 +41,12 @@ public class Controller {
 
     public void search() throws Exception {
         if (model.getCurrent() == null) {
-            throw new Exception("Debe seleccionar una imagen antes de buscar");
+            throw new ValidacionImagen("Debe seleccionar una imagen antes de buscar");
         }
 
         String selectedMethod = (String) view.getSearchMethodcomboBox().getSelectedItem();
         if (selectedMethod == null || selectedMethod.isBlank()) {
-            throw new Exception("Debe seleccionar un método de búsqueda");
+            throw new MetodoBusquedaInvalido("Debe seleccionar un método de búsqueda");
         }
 
         model.setMethod(selectedMethod);
