@@ -133,10 +133,7 @@ public class Serializador {
     private boolean esArchivoImagen(File archivo) {
         String nombre = archivo.getName().toLowerCase();
 
-        return nombre.endsWith(".png")
-                || nombre.endsWith(".jpg")
-                || nombre.endsWith(".jpeg")
-                || nombre.endsWith(".bmp");
+        return nombre.endsWith(".png") || nombre.endsWith(".jpg") || nombre.endsWith(".jpeg") || nombre.endsWith(".bmp");
     }
 
 

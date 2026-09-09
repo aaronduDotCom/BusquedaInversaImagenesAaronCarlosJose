@@ -1,8 +1,5 @@
 package Presentation.Busqueda;
 
-import Model.Estructuras.ResultadoBusqueda;
-import Model.Services.Busqueda.BuscadorInverso;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -21,6 +18,7 @@ public class View extends JFrame implements PropertyChangeListener {
     private JButton seleccionarImagenButton;
     private JComboBox<String> comboBoxOrdenamiento;
     private JComboBox<String> comboBoxBins;
+    private JTextField cantidadResultados;
 
     public View() {
         setTitle("Búsqueda Inversa de Imágenes");
@@ -70,6 +68,7 @@ public class View extends JFrame implements PropertyChangeListener {
                 }
             }
         });
+
     }
 
     Controller controller;
@@ -95,6 +94,7 @@ public class View extends JFrame implements PropertyChangeListener {
         return imagePreview;
     }
     public JLabel getImageRoute() { return imageRoute; }
+    public JTextField getCantidadResultados() {return cantidadResultados;}
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

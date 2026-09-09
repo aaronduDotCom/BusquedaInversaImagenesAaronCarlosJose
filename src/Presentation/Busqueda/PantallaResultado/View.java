@@ -83,7 +83,7 @@ public class View extends JFrame implements PropertyChangeListener {
                 while (iterador.hasNext()) {
                     Resultado resultado = iterador.next();
                     //JPanel tarjeta = crearTarjeta(resultado);
-                    //results.add(tarjeta);
+                    //resultado.add(tarjeta);
                 }
                 results.revalidate();
                 results.repaint();

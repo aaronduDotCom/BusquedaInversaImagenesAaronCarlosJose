@@ -1,8 +1,20 @@
 package Presentation.Busqueda;
 
+import Model.Estructuras.ColeccionImagenData;
+import Model.Estructuras.ResultadoBusqueda;
+import Model.Excepciones.CantidadResultadosInvalida;
 import Model.Excepciones.MetodoBusquedaInvalido;
 import Model.Excepciones.ValidacionImagen;
 import Model.Imagen.Imagen;
+import Model.Services.Busqueda.BuscadorInverso;
+import Model.Services.Fabricas.FabricaBusqueda;
+import Model.Services.Fabricas.FabricaBusquedaBubble;
+import Model.Services.Fabricas.FabricaBusquedaMerge;
+import Model.Services.Ordenamiento.BubbleSort;
+import Model.Services.Ordenamiento.MergeSort;
+import Model.Services.Ordenamiento.MetodoOrdenamiento;
+import Model.Services.Similitud.MetodoSimilitud;
+
 import java.io.File;
 
 public class Controller {
@@ -61,24 +73,69 @@ public class Controller {
     }
 
     public void search() throws Exception {
+
         if (model.getCurrent() == null) {
             throw new ValidacionImagen("Debe seleccionar una imagen antes de buscar");
         }
-
-        String selectedMethod = (String) view.getSearchMethodcomboBox().getSelectedItem();
-        if (selectedMethod == null || selectedMethod.isBlank()) {
+        String metodoBusquedaSeleccionado = (String) view.getSearchMethodcomboBox().getSelectedItem();
+        if (metodoBusquedaSeleccionado == null || metodoBusquedaSeleccionado.isBlank()) {
             throw new MetodoBusquedaInvalido("Debe seleccionar un método de búsqueda");
         }
 
-        model.setMethod(selectedMethod);
+        String textoCantidad = view.getCantidadResultados().getText().trim();
+        if (textoCantidad.isEmpty()) {
+            throw new CantidadResultadosInvalida("Debe indicar la cantidad de resultados");
+        }
+        int cantidadResultados;
+        try {
+            cantidadResultados = Integer.parseInt(textoCantidad);
+        } catch (NumberFormatException ex) {
+            throw new CantidadResultadosInvalida("La cantidad de resultados debe ser un número entero");
+        }
 
-        System.out.println("Imagen seleccionada: " + model.getCurrent().getRuta());
-        System.out.println("Método seleccionado: " + model.getMethod());
+        if (cantidadResultados <= 0) {
+            throw new CantidadResultadosInvalida("La cantidad de resultados debe ser mayor que cero");
+        }
+        model.setMethod(metodoBusquedaSeleccionado);
+        /*
+         * ABSTRACT FACTORY
+         */
+        FabricaBusqueda fabrica;
+        if ("Similitud Coseno".equals(metodoBusquedaSeleccionado)) {
+            fabrica = new FabricaBusquedaCoseno();
+        } else if ("Similitud Euclidiana".equals(metodoBusquedaSeleccionado)) {
+            fabrica = new FabricaBusquedaEuclidiana();
+        } else {
+            fabrica = new FabricaBusquedaInterseccion();
+        }
+        MetodoBusqueda metodoBusqueda = fabrica.crearMetodoBusqueda();
+        /*
+         * STRATEGY DE ORDENAMIENTO
+         */
+        MetodoOrdenamiento metodoOrdenamiento;
+        String ordenamientoSeleccionado = (String) view.getComboBoxOrdenamiento().getSelectedItem();
+        if ("Merge Sort".equals(ordenamientoSeleccionado)) {
+            metodoOrdenamiento = new MergeSort();
+        } else {
+            metodoOrdenamiento = new BubbleSort();
+        }
+        /*
+         * BUSQUEDA
+         */
+        BuscadorInverso buscador = new BuscadorInverso();
+        ResultadoBusqueda resultados = buscador.buscar(model.getCurrent(), metodoBusqueda, metodoOrdenamiento, cantidadResultados);
 
-        // Pendiente:
-        // 1. Llamar al servicio correspondiente.
-        // 2. Obtener las imágenes similares.
-        // 3. Ordenar los resultados.
-        // 4. Abrir la pantalla de resultados.
+        /*
+         * MVC Pantalla Resultado
+         */
+        Presentation.Busqueda.PantallaResultado.Model resultadoModel = new Presentation.Busqueda.PantallaResultado.Model();
+        Presentation.Busqueda.PantallaResultado.View resultadoView = new Presentation.Busqueda.PantallaResultado.View();
+        Presentation.Busqueda.PantallaResultado.Controller resultadoController = new Presentation.Busqueda.PantallaResultado.Controller(resultadoView, resultadoModel);
+        resultadoModel.setCurrent(model.getCurrent());
+        resultadoModel.setMethod(model.getMethod());
+        resultadoModel.setResults(resultados);
+        resultadoView.setVisible(true);
+
+        view.dispose();
     }
 }
