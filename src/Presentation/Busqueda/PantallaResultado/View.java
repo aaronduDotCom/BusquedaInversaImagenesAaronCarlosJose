@@ -1,5 +1,6 @@
 package Presentation.Busqueda.PantallaResultado;
 
+import Model.Imagen.ImagenData;
 import Model.Services.Busqueda.Resultado;
 import Model.Estructuras.Iterator;
 import Model.Imagen.Imagen;
@@ -122,27 +123,26 @@ public class View extends JFrame implements PropertyChangeListener {
         label.setVerticalAlignment(SwingConstants.CENTER);
     }
 
-    /*private JPanel crearTarjeta(Resultado resultado) {
+    private JPanel crearTarjeta(Resultado resultado) {
 
-        Imagen imagen = resultado.getImagen();
+        ImagenData imagenData = resultado.getImagenData();
+
         JPanel tarjeta = new JPanel(new BorderLayout(5, 5));
         tarjeta.setPreferredSize(new Dimension(240, 220));
-
         tarjeta.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.GRAY, 1), new EmptyBorder(10, 10, 10, 10)));
         JLabel imagenLabel = new JLabel("Imagen no disponible", SwingConstants.CENTER);
         imagenLabel.setPreferredSize(new Dimension(220, 160));
-        mostrarImagen(imagenLabel, imagen.getRuta(), 220, 160);
-        String nombreArchivo = new File(imagen.getRuta()).getName();
+        mostrarImagen(imagenLabel, imagenData.getRuta(), 220, 160);
+        String nombreArchivo = new File(imagenData.getRuta()).getName();
         JLabel nombreLabel = new JLabel(nombreArchivo, SwingConstants.CENTER);
-        nombreLabel.setToolTipText(imagen.getRuta());
-        JLabel similitudLabel = new JLabel(String.format("Similitud: %.2f%%", resultado.getSimilitud()), SwingConstants.CENTER);
+        nombreLabel.setToolTipText(imagenData.getRuta());
+        JLabel similitudLabel = new JLabel(String.format("Similitud: %.2f%%", resultado.getValor()), SwingConstants.CENTER);
         similitudLabel.setFont(similitudLabel.getFont().deriveFont(Font.BOLD));
         JPanel informacionTarjeta = new JPanel(new GridLayout(2, 1, 0, 3));
         informacionTarjeta.add(nombreLabel);
         informacionTarjeta.add(similitudLabel);
         tarjeta.add(imagenLabel, BorderLayout.CENTER);
         tarjeta.add(informacionTarjeta, BorderLayout.SOUTH);
-
         return tarjeta;
-    }*/
+    }
 }

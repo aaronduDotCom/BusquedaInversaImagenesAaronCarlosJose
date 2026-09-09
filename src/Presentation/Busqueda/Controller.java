@@ -2,20 +2,23 @@ package Presentation.Busqueda;
 
 import Model.Estructuras.ColeccionImagenData;
 import Model.Estructuras.ResultadoBusqueda;
+import Model.Estructuras.Vector;
 import Model.Excepciones.CantidadResultadosInvalida;
 import Model.Excepciones.MetodoBusquedaInvalido;
 import Model.Excepciones.ValidacionImagen;
+import Model.Imagen.HistogramaColor;
 import Model.Imagen.Imagen;
+import Model.Imagen.ImagenData;
+import Model.Repositorios.RepoImagenes;
 import Model.Services.Busqueda.BuscadorInverso;
-import Model.Services.Fabricas.FabricaBusqueda;
-import Model.Services.Fabricas.FabricaBusquedaBubble;
-import Model.Services.Fabricas.FabricaBusquedaMerge;
+import Model.Services.Fabricas.*;
 import Model.Services.Ordenamiento.BubbleSort;
 import Model.Services.Ordenamiento.MergeSort;
 import Model.Services.Ordenamiento.MetodoOrdenamiento;
 import Model.Services.Similitud.MetodoSimilitud;
 
 import java.io.File;
+import java.util.UUID;
 
 public class Controller {
 
@@ -77,18 +80,25 @@ public class Controller {
         if (model.getCurrent() == null) {
             throw new ValidacionImagen("Debe seleccionar una imagen antes de buscar");
         }
-        String metodoBusquedaSeleccionado = (String) view.getSearchMethodcomboBox().getSelectedItem();
-        if (metodoBusquedaSeleccionado == null || metodoBusquedaSeleccionado.isBlank()) {
+
+        String metodoSeleccionado = (String) view.getSearchMethodcomboBox().getSelectedItem();
+
+        if (metodoSeleccionado == null || metodoSeleccionado.isBlank()) {
+
             throw new MetodoBusquedaInvalido("Debe seleccionar un método de búsqueda");
         }
 
         String textoCantidad = view.getCantidadResultados().getText().trim();
+
         if (textoCantidad.isEmpty()) {
             throw new CantidadResultadosInvalida("Debe indicar la cantidad de resultados");
         }
+
         int cantidadResultados;
+
         try {
             cantidadResultados = Integer.parseInt(textoCantidad);
+
         } catch (NumberFormatException ex) {
             throw new CantidadResultadosInvalida("La cantidad de resultados debe ser un número entero");
         }
@@ -96,44 +106,53 @@ public class Controller {
         if (cantidadResultados <= 0) {
             throw new CantidadResultadosInvalida("La cantidad de resultados debe ser mayor que cero");
         }
-        model.setMethod(metodoBusquedaSeleccionado);
+
+        model.setMethod(metodoSeleccionado);
         /*
          * ABSTRACT FACTORY
          */
-        FabricaBusqueda fabrica;
-        if ("Similitud Coseno".equals(metodoBusquedaSeleccionado)) {
-            fabrica = new FabricaBusquedaCoseno();
-        } else if ("Similitud Euclidiana".equals(metodoBusquedaSeleccionado)) {
-            fabrica = new FabricaBusquedaEuclidiana();
+        FabricaSimilitud fabrica;
+        if ("Coseno".equals(metodoSeleccionado)) {
+            fabrica = new FabricaSimilitudCoseno();
+        } else if ("Euclidiana".equals(metodoSeleccionado)) {
+            fabrica = new FabricaSimilitudEuclidiana();
         } else {
-            fabrica = new FabricaBusquedaInterseccion();
+            fabrica = new FabricaSimilitudInterseccion();
         }
-        MetodoBusqueda metodoBusqueda = fabrica.crearMetodoBusqueda();
+        MetodoSimilitud metodoSimilitud = fabrica.crearMetodoSimilitud();
         /*
-         * STRATEGY DE ORDENAMIENTO
+         * STRATEGY ORDENAMIENTO
          */
         MetodoOrdenamiento metodoOrdenamiento;
         String ordenamientoSeleccionado = (String) view.getComboBoxOrdenamiento().getSelectedItem();
         if ("Merge Sort".equals(ordenamientoSeleccionado)) {
             metodoOrdenamiento = new MergeSort();
+
         } else {
             metodoOrdenamiento = new BubbleSort();
         }
+
+        /*
+         * CREAR IMAGENDATA DE CONSULTA
+         */
+        HistogramaColor histograma = new HistogramaColor();
+        Vector<Double> vectorCaracteristico = histograma.calculaVector(model.getCurrent());
+        ImagenData imagenConsulta = new ImagenData(vectorCaracteristico, UUID.randomUUID(), model.getCurrent().getRuta());
         /*
          * BUSQUEDA
          */
-        BuscadorInverso buscador = new BuscadorInverso();
-        ResultadoBusqueda resultados = buscador.buscar(model.getCurrent(), metodoBusqueda, metodoOrdenamiento, cantidadResultados);
-
+        BuscadorInverso buscador = new BuscadorInverso(metodoSimilitud, metodoOrdenamiento);
+        ResultadoBusqueda resultados = buscador.buscar(imagenConsulta, RepoImagenes.getInstance().obtenerImagenes(), cantidadResultados);
         /*
-         * MVC Pantalla Resultado
+         * PANTALLA RESULTADOS
          */
-        Presentation.Busqueda.PantallaResultado.Model resultadoModel = new Presentation.Busqueda.PantallaResultado.Model();
+        Presentation.Busqueda.PantallaResultado.Model resultadoModel = new Presentation.Busqueda.PantallaResultado.Model(model.getCurrent(), resultados, model.getMethod());
         Presentation.Busqueda.PantallaResultado.View resultadoView = new Presentation.Busqueda.PantallaResultado.View();
         Presentation.Busqueda.PantallaResultado.Controller resultadoController = new Presentation.Busqueda.PantallaResultado.Controller(resultadoView, resultadoModel);
         resultadoModel.setCurrent(model.getCurrent());
         resultadoModel.setMethod(model.getMethod());
         resultadoModel.setResults(resultados);
+
         resultadoView.setVisible(true);
 
         view.dispose();

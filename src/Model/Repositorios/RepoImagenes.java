@@ -29,8 +29,7 @@ public class RepoImagenes {
     }
 
     public void reemplazar(
-            ColeccionImagenData nuevaColeccion
-    ) {
+            ColeccionImagenData nuevaColeccion) {
         if (nuevaColeccion == null) {
             coleccion = new ColeccionImagenData();
         } else {

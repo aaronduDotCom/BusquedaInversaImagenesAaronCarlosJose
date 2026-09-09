@@ -14,10 +14,15 @@ public class Model extends AbstractModel{
     private String method;
     private ResultadoBusqueda results; // aun no hay clase ResultadoBusqueda
 
-    public Model(Imagen current, List<ResultadoBusqueda> results, String method) {
-        this.current = null;
-        this.results = new ResultadoBusqueda();
-        this.method = "";
+    public Model(Imagen current, ResultadoBusqueda results, String method) {
+        this.current = current;
+        if (results == null) {
+            this.results = new ResultadoBusqueda();
+        } else {
+            this.results = results;
+        }
+
+        this.method = method;
     }
 
     public Imagen getCurrent() {
@@ -54,7 +59,6 @@ public class Model extends AbstractModel{
         this.current = null;
         this.method = "";
         this.results = new ResultadoBusqueda();
-
         firePropertyChange(CURRENT);
         firePropertyChange(METHOD);
         firePropertyChange(RESULTS);
