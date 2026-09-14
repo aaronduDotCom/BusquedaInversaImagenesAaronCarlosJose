@@ -17,6 +17,10 @@ public class View extends JFrame implements PropertyChangeListener {
     private JLabel imagePreview;
     private JLabel imageRoute;
     private JButton seleccionarImagenButton;
+    private JComboBox<String> ordenamientoComboBox;
+    private JComboBox<String> binsComboBox;
+    private JTextField cantidadResultadosTextField;
+    private JLabel estadoLabel;
 
     public View() {
         setTitle("Búsqueda Inversa de Imágenes");
@@ -84,6 +88,10 @@ public class View extends JFrame implements PropertyChangeListener {
         return imagePreview;
     }
     public JLabel getImageRoute() { return imageRoute; }
+    public JComboBox<String> getOrdenamientoComboBox() { return ordenamientoComboBox; }
+    public JComboBox<String> getBinsComboBox() { return binsComboBox; }
+    public JTextField getCantidadResultadosTextField() { return cantidadResultadosTextField; }
+    public JLabel getEstadoLabel() { return estadoLabel; }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -105,6 +113,12 @@ public class View extends JFrame implements PropertyChangeListener {
 
             case Model.METHOD:
                 searchMethodcomboBox.setSelectedItem(model.getMethod());
+                break;
+
+            case Model.ESTADO:
+                if (estadoLabel != null) {
+                    estadoLabel.setText(model.getEstado());
+                }
                 break;
         }
 

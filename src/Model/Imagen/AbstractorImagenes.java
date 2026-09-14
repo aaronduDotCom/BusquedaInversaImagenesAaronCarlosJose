@@ -15,6 +15,10 @@ public class AbstractorImagenes {
         hc = new HistogramaColor();
     }
 
+    public AbstractorImagenes(int tamannoBin){
+        hc = new HistogramaColor(tamannoBin);
+    }
+
     public ColeccionImagenData abstractarImagenes(ColeccionImagen imagenes){
 
         ColeccionImagenData cid = new ColeccionImagenData();

@@ -77,9 +77,12 @@ public class View extends JFrame implements PropertyChangeListener {
                 break;
             case Model.RESULTS:
                 results.removeAll();
+                informationLabel.setText("<html>" + "Método: " + model.getMethod() + "<br>"
+                        + "Resultados encontrados: " + model.getResults().tamano() + "</html>");
+
                 Iterator<Resultado> iterador = model.getResults().getIterador();
                 while (iterador.hasNext()){
-                    informationLabel.setText("<html>" + "Método: " + model.getMethod() + "<br>" + "Resultados encontrados: " + model.getResults().tamano() + "</html>");
+                    results.add(crearTarjeta(iterador.next())); // avanza el iterador
                 }
                 break;
         }
@@ -116,27 +119,34 @@ public class View extends JFrame implements PropertyChangeListener {
         label.setVerticalAlignment(SwingConstants.CENTER);
     }
 
-    /*private JPanel crearTarjeta(Resultado resultado) {
+    private JPanel crearTarjeta(Resultado resultado) {
 
-        Imagen imagen = resultado.getImagen();
+        String ruta = resultado.getImagenData().getRuta();
+
         JPanel tarjeta = new JPanel(new BorderLayout(5, 5));
         tarjeta.setPreferredSize(new Dimension(240, 220));
+        tarjeta.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(Color.GRAY, 1), new EmptyBorder(10, 10, 10, 10)));
 
-        tarjeta.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Color.GRAY, 1), new EmptyBorder(10, 10, 10, 10)));
         JLabel imagenLabel = new JLabel("Imagen no disponible", SwingConstants.CENTER);
         imagenLabel.setPreferredSize(new Dimension(220, 160));
-        mostrarImagen(imagenLabel, imagen.getRuta(), 220, 160);
-        String nombreArchivo = new File(imagen.getRuta()).getName();
+        mostrarImagen(imagenLabel, ruta, 220, 160);
+
+        String nombreArchivo = new File(ruta).getName();
         JLabel nombreLabel = new JLabel(nombreArchivo, SwingConstants.CENTER);
-        nombreLabel.setToolTipText(imagen.getRuta());
-        JLabel similitudLabel = new JLabel(String.format("Similitud: %.2f%%", resultado.getSimilitud()), SwingConstants.CENTER);
-        similitudLabel.setFont(similitudLabel.getFont().deriveFont(Font.BOLD));
+        nombreLabel.setToolTipText(ruta);
+
+        JLabel valorLabel = new JLabel(
+                String.format("Valor: %.4f", resultado.getValor()), SwingConstants.CENTER);
+        valorLabel.setFont(valorLabel.getFont().deriveFont(Font.BOLD));
+
         JPanel informacionTarjeta = new JPanel(new GridLayout(2, 1, 0, 3));
         informacionTarjeta.add(nombreLabel);
-        informacionTarjeta.add(similitudLabel);
+        informacionTarjeta.add(valorLabel);
+
         tarjeta.add(imagenLabel, BorderLayout.CENTER);
         tarjeta.add(informacionTarjeta, BorderLayout.SOUTH);
 
         return tarjeta;
-    }*/
+    }
 }

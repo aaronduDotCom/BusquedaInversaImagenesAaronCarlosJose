@@ -17,7 +17,8 @@ public class DistanciaEuclidiana implements MetodoSimilitud {
         // Sumatoria
         double resultado = 0;
 
-        for (int i = 0; i < 64; i++) {
+        int n = a.getVector().tamanno();
+        for (int i = 0; i < n; i++) {
             double diferencia =
                     a.getVector().getPos(i)
                             - b.getVector().getPos(i);
@@ -59,8 +60,5 @@ public class DistanciaEuclidiana implements MetodoSimilitud {
             throw new ValidacionImagen("Los vectores deben tener el mismo tamaño");
         }
 
-        if (a.getVector().tamanno() != 64) {
-            throw new ValidacionImagen("Los histogramas deben tener 64 posiciones");
-        }
     }
 }

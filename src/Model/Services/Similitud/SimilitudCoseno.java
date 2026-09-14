@@ -23,7 +23,8 @@ public class SimilitudCoseno implements MetodoSimilitud {
         double sumaCuadradosA = 0;
         double sumaCuadradosB = 0;
 
-        for (int i = 0; i < 64; i++) {
+        int n = a.getVector().tamanno();
+        for (int i = 0; i < n; i++) {
             double valorA = a.getVector().getPos(i);
             double valorB = b.getVector().getPos(i);
             // Producto escalar A · B
@@ -78,9 +79,6 @@ public class SimilitudCoseno implements MetodoSimilitud {
         }
         if (a.getVector().tamanno() != b.getVector().tamanno()) {
             throw new ValidacionImagen("Los vectores deben tener el mismo tamaño");
-        }
-        if (a.getVector().tamanno() != 64) {
-            throw new ValidacionImagen("Los histogramas deben tener 64 posiciones");
         }
     }
 }

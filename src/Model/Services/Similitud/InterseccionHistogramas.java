@@ -16,7 +16,8 @@ public class InterseccionHistogramas implements MetodoSimilitud {
         // Sumatoria
         double resultado = 0;
 
-        for (int i = 0; i < 64; i++) {
+        int n = a.getVector().tamanno();
+        for (int i = 0; i < n; i++) {
             // Sacamos el mínimo de ambos histogramas
             resultado += Math.min(
                     a.getVector().getPos(i),
@@ -48,9 +49,6 @@ public class InterseccionHistogramas implements MetodoSimilitud {
         }
         if (a.getVector().tamanno() != b.getVector().tamanno()) {
             throw new ValidacionImagen("Los vectores deben tener el mismo tamaño");
-        }
-        if (a.getVector().tamanno() != 64) {
-            throw new ValidacionImagen("Los histogramas deben tener 64 posiciones");
         }
     }
 }

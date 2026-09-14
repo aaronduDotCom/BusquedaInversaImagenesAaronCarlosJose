@@ -35,4 +35,22 @@ public class BuscadorInverso {
 
         return metodoOrdenamiento.ordenar(resultados, metodoSimilitud.esAscendente());
     }
+
+    // Igual que el anterior, pero devolviendo solo los primeros N resultados
+    public ResultadoBusqueda buscar(ImagenData imagenConsulta, ColeccionImagenData coleccion, int cantidad) {
+        ResultadoBusqueda ordenados = buscar(imagenConsulta, coleccion);
+
+        if (cantidad <= 0 || cantidad >= ordenados.tamano()) {
+            return ordenados;
+        }
+
+        ResultadoBusqueda recortados = new ResultadoBusqueda();
+        Iterator<Resultado> iterador = ordenados.getIterador();
+        int contados = 0;
+        while (iterador.hasNext() && contados < cantidad) {
+            recortados.agregar(iterador.next());
+            contados++;
+        }
+        return recortados;
+    }
 }

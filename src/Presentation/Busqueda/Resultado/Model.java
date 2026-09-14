@@ -2,8 +2,6 @@ package Presentation.Busqueda.Resultado;
 import Model.Estructuras.ResultadoBusqueda;
 import Model.Imagen.Imagen;
 import Presentation.AbstractModel;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Model extends AbstractModel{
     public static final String CURRENT = "current";
@@ -12,9 +10,9 @@ public class Model extends AbstractModel{
 
     private Imagen current;
     private String method;
-    private ResultadoBusqueda results; // aun no hay clase ResultadoBusqueda
+    private ResultadoBusqueda results;
 
-    public Model(Imagen current, List<ResultadoBusqueda> results, String method) {
+    public Model() {
         this.current = null;
         this.results = new ResultadoBusqueda();
         this.method = "";
