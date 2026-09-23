@@ -33,7 +33,7 @@ public class Main {
                 coleccion = serializador.serializarCarpeta(carpetaSeleccionada.getAbsolutePath(), rutaBin);
             }
             RepoImagenes.getInstance().reemplazar(coleccion);
-            // ColeccionImagenData coleccion = serializador.procesarCarpeta(carpetaSeleccionada.getAbsolutePath());
+            //ColeccionImagenData coleccion = serializador.procesarCarpeta(carpetaSeleccionada.getAbsolutePath());
             // RepoImagenes.getInstance().reemplazar(coleccion);
             Presentation.Busqueda.Model model = new Presentation.Busqueda.Model();
             Presentation.Busqueda.View view = new Presentation.Busqueda.View();

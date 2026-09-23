@@ -77,6 +77,10 @@ public class Controller {
 
     public void search() throws Exception {
 
+        // aqui se tiene que poner que la cantidad de bins sean las seleccionadas por el usuario
+        String binsSeleccionados = (String) view.getComboBoxBins().getSelectedItem();
+        int cantidadBins = Integer.parseInt(binsSeleccionados);
+
         if (model.getCurrent() == null) {
             throw new ValidacionImagen("Debe seleccionar una imagen antes de buscar");
         }
@@ -89,7 +93,6 @@ public class Controller {
         }
 
         String textoCantidad = view.getCantidadResultados().getText().trim();
-
         if (textoCantidad.isEmpty()) {
             throw new CantidadResultadosInvalida("Debe indicar la cantidad de resultados");
         }
@@ -108,9 +111,7 @@ public class Controller {
         }
 
         model.setMethod(metodoSeleccionado);
-        /*
-         * ABSTRACT FACTORY
-         */
+
         FabricaSimilitud fabrica;
         if ("Coseno".equals(metodoSeleccionado)) {
             fabrica = new FabricaSimilitudCoseno();
@@ -120,9 +121,7 @@ public class Controller {
             fabrica = new FabricaSimilitudInterseccion();
         }
         MetodoSimilitud metodoSimilitud = fabrica.crearMetodoSimilitud();
-        /*
-         * STRATEGY ORDENAMIENTO
-         */
+
         MetodoOrdenamiento metodoOrdenamiento;
         String ordenamientoSeleccionado = (String) view.getComboBoxOrdenamiento().getSelectedItem();
         if ("Merge Sort".equals(ordenamientoSeleccionado)) {
@@ -132,27 +131,17 @@ public class Controller {
             metodoOrdenamiento = new BubbleSort();
         }
 
-        /*
-         * CREAR IMAGENDATA DE CONSULTA
-         */
-        HistogramaColor histograma = new HistogramaColor();
+        HistogramaColor histograma = new HistogramaColor(cantidadBins);
         Vector<Double> vectorCaracteristico = histograma.calculaVector(model.getCurrent());
         ImagenData imagenConsulta = new ImagenData(vectorCaracteristico, UUID.randomUUID(), model.getCurrent().getRuta());
-        /*
-         * BUSQUEDA
-         */
         BuscadorInverso buscador = new BuscadorInverso(metodoSimilitud, metodoOrdenamiento);
         ResultadoBusqueda resultados = buscador.buscar(imagenConsulta, RepoImagenes.getInstance().obtenerImagenes(), cantidadResultados);
-        /*
-         * PANTALLA RESULTADOS
-         */
         Presentation.Busqueda.PantallaResultado.Model resultadoModel = new Presentation.Busqueda.PantallaResultado.Model(model.getCurrent(), resultados, model.getMethod());
         Presentation.Busqueda.PantallaResultado.View resultadoView = new Presentation.Busqueda.PantallaResultado.View();
         Presentation.Busqueda.PantallaResultado.Controller resultadoController = new Presentation.Busqueda.PantallaResultado.Controller(resultadoView, resultadoModel);
         resultadoModel.setCurrent(model.getCurrent());
         resultadoModel.setMethod(model.getMethod());
         resultadoModel.setResults(resultados);
-
         resultadoView.setVisible(true);
 
         view.dispose();
