@@ -56,8 +56,8 @@ public class View extends JFrame implements PropertyChangeListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int bins = Integer.parseInt(comboBoxBins.getSelectedItem().toString());
-                if (bins != 64) {
-                    JOptionPane.showMessageDialog(contentPanel, "Actualmente solo se soporta la búsqueda con 64 bins.", "Información", JOptionPane.INFORMATION_MESSAGE);
+                if (bins != 2 && bins != 4 && bins != 8 && bins != 16 && bins != 32 && bins != 64 && bins != 128 && bins != 256) {
+                    JOptionPane.showMessageDialog(contentPanel, "Solo se aceptan rangos de 2 a la n.", "Información", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 try {

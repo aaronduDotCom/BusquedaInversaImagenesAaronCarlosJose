@@ -134,7 +134,7 @@ public class Controller {
         HistogramaColor histograma = new HistogramaColor(cantidadBins);
         Vector<Double> vectorCaracteristico = histograma.calculaVector(model.getCurrent());
         ImagenData imagenConsulta = new ImagenData(vectorCaracteristico, UUID.randomUUID(), model.getCurrent().getRuta());
-        BuscadorInverso buscador = new BuscadorInverso(metodoSimilitud, metodoOrdenamiento);
+        BuscadorInverso buscador = new BuscadorInverso(metodoSimilitud, metodoOrdenamiento, cantidadBins);
         ResultadoBusqueda resultados = buscador.buscar(imagenConsulta, RepoImagenes.getInstance().obtenerImagenes(), cantidadResultados);
         Presentation.Busqueda.PantallaResultado.Model resultadoModel = new Presentation.Busqueda.PantallaResultado.Model(model.getCurrent(), resultados, model.getMethod());
         Presentation.Busqueda.PantallaResultado.View resultadoView = new Presentation.Busqueda.PantallaResultado.View();
