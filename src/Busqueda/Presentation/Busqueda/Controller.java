@@ -1,5 +1,6 @@
 package Busqueda.Presentation.Busqueda;
 
+import Busqueda.Model.Estructuras.ColeccionImagenData;
 import Busqueda.Model.Estructuras.ResultadoBusqueda;
 import Busqueda.Model.Estructuras.Vector;
 import Busqueda.Model.Excepciones.CantidadResultadosInvalida;
@@ -9,6 +10,7 @@ import Busqueda.Model.Imagen.HistogramaColor;
 import Busqueda.Model.Imagen.Imagen;
 import Busqueda.Model.Imagen.ImagenData;
 import Busqueda.Model.Repositorios.RepoImagenes;
+import Busqueda.Model.Serializador.Serializador;
 import Busqueda.Model.Services.Busqueda.BuscadorInverso;
 import Busqueda.Model.Services.Fabricas.*;
 import Busqueda.Model.Services.Ordenamiento.BubbleSort;
@@ -23,7 +25,7 @@ public class Controller {
 
     private final View view;
     private final Model model;
-    private int binsBanco;
+
 
     public Controller(View view, Model model) {
         this.view = view;
@@ -35,6 +37,10 @@ public class Controller {
         cargarMetodosBusqueda();
         cargarMetodosOrdenamiento();
         cargarBins();
+        int binsBanco = RepoImagenes.getInstance().getCantidadBins();
+        if (binsBanco > 0){
+            view.getComboBoxBins().setSelectedItem(String.valueOf(binsBanco));
+        }
     }
 
     private void cargarMetodosBusqueda() {
@@ -64,13 +70,6 @@ public class Controller {
 
     }
 
-    public int getBinsBanco() {
-        return binsBanco;
-    }
-
-    public void setBinsBanco(int binsBanco) {
-        this.binsBanco = binsBanco;
-    }
 
     public void selectImage(String path) throws Exception {
         File imageFile = new File(path);
@@ -90,31 +89,55 @@ public class Controller {
 
     public void search() throws Exception {
 
-        // aqui se tiene que poner que la cantidad de bins sean las seleccionadas por el usuario
-        String binsSeleccionados = (String) view.getComboBoxBins().getSelectedItem();
-        int cantidadBins = Integer.parseInt(binsSeleccionados);
-        if (cantidadBins != binsBanco) {
-            throw new ValidacionImagen(
-                    "El banco de imágenes fue procesado con "
-                            + binsBanco
-                            + " bins. Para buscar debe seleccionar "
-                            + binsBanco
-                            + " bins o reconstruir el banco."
-            );
-        }
-
+        // Validar que haya una imagen seleccionada
         if (model.getCurrent() == null) {
             throw new ValidacionImagen("Debe seleccionar una imagen antes de buscar");
+        }
+
+        int cantidadBins = getCantidadBins();
+
+        RepoImagenes repositorio = RepoImagenes.getInstance();
+
+        if (cantidadBins != repositorio.getCantidadBins()) {
+
+            String rutaCarpeta = repositorio.getRutaCarpeta();
+            String rutaArchivoBinario = repositorio.getRutaArchivoBinario();
+
+            if (rutaCarpeta == null || rutaCarpeta.isBlank()) {
+                throw new ValidacionImagen("No se conoce la carpeta del banco de imágenes");
+            }
+
+            if (rutaArchivoBinario == null || rutaArchivoBinario.isBlank()) {
+                throw new ValidacionImagen("No se conoce la ruta del archivo binario");
+            }
+            Serializador serializador = new Serializador();
+            ColeccionImagenData nuevaColeccion = serializador.serializarCarpeta(rutaCarpeta, rutaArchivoBinario, cantidadBins);
+
+            if (nuevaColeccion.tamano() == 0) {
+                throw new ValidacionImagen("No se encontraron imágenes válidas " + "al reconstruir el banco");
+            }
+
+            repositorio.reemplazar(nuevaColeccion, cantidadBins);
+            System.out.println("Banco reconstruido con " + cantidadBins + " bins");
+            System.out.println("Tamaño de cada vector: " + (cantidadBins * cantidadBins * cantidadBins));
+            System.out.println("Cantidad de imágenes procesadas: " + nuevaColeccion.tamano());
         }
 
         String metodoSeleccionado = (String) view.getSearchMethodcomboBox().getSelectedItem();
 
         if (metodoSeleccionado == null || metodoSeleccionado.isBlank()) {
-
             throw new MetodoBusquedaInvalido("Debe seleccionar un método de búsqueda");
         }
 
+
+        String ordenamientoSeleccionado = (String) view.getComboBoxOrdenamiento().getSelectedItem();
+
+        if (ordenamientoSeleccionado == null || ordenamientoSeleccionado.isBlank()) {
+            throw new IllegalArgumentException("Debe seleccionar un método de ordenamiento");
+        }
+
         String textoCantidad = view.getCantidadResultados().getText().trim();
+
         if (textoCantidad.isEmpty()) {
             throw new CantidadResultadosInvalida("Debe indicar la cantidad de resultados");
         }
@@ -125,59 +148,56 @@ public class Controller {
             cantidadResultados = Integer.parseInt(textoCantidad);
 
         } catch (NumberFormatException ex) {
-            throw new CantidadResultadosInvalida("La cantidad de resultados debe ser un número entero");
+            throw new CantidadResultadosInvalida("La cantidad de resultados debe ser " + "un número entero");
         }
 
         if (cantidadResultados <= 0) {
             throw new CantidadResultadosInvalida("La cantidad de resultados debe ser mayor que cero");
         }
 
-        model.setMethod(metodoSeleccionado);
+        int cantidadImagenesBanco = repositorio.obtenerImagenes().tamano();
+
+        if (cantidadImagenesBanco == 0) {
+            throw new ValidacionImagen("El banco de imágenes está vacío");
+        }
+        if (cantidadResultados > cantidadImagenesBanco) {
+            throw new CantidadResultadosInvalida("La cantidad de resultados no puede superar " + "la cantidad de imágenes del banco: " + cantidadImagenesBanco);
+        }
 
         FabricaSimilitud fabrica;
-
         if ("Similitud Coseno".equals(metodoSeleccionado)) {
             fabrica = new FabricaSimilitudCoseno();
-
         } else if ("Similitud Euclidiana".equals(metodoSeleccionado)) {
             fabrica = new FabricaSimilitudEuclidiana();
-
-        } else if (
-                "Intersección de Histogramas"
-                        .equals(metodoSeleccionado)
-        ) {
+        } else if ("Intersección de Histogramas".equals(metodoSeleccionado)) {
             fabrica = new FabricaSimilitudInterseccion();
-
         } else {
-            throw new MetodoBusquedaInvalido(
-                    "Método de búsqueda no reconocido: "
-                            + metodoSeleccionado
-            );
+            throw new MetodoBusquedaInvalido("Método de búsqueda no reconocido: " + metodoSeleccionado);
         }
-        MetodoSimilitud metodoSimilitud = fabrica.crearMetodoSimilitud();
 
+        MetodoSimilitud metodoSimilitud = fabrica.crearMetodoSimilitud();
         MetodoOrdenamiento metodoOrdenamiento;
-        String ordenamientoSeleccionado = (String) view.getComboBoxOrdenamiento().getSelectedItem();
         if ("Merge Sort".equals(ordenamientoSeleccionado)) {
             metodoOrdenamiento = new MergeSort();
-
-        } else {
+        } else if ("Bubble Sort".equals(ordenamientoSeleccionado)) {
             metodoOrdenamiento = new BubbleSort();
+        } else {
+            throw new IllegalArgumentException("Método de ordenamiento no reconocido: " + ordenamientoSeleccionado);
         }
 
         HistogramaColor histograma = new HistogramaColor();
         Vector<Double> vectorCaracteristico = histograma.calculaVector(model.getCurrent(), cantidadBins);
         ImagenData imagenConsulta = new ImagenData(vectorCaracteristico, UUID.randomUUID(), model.getCurrent().getRuta());
         BuscadorInverso buscador = new BuscadorInverso(metodoSimilitud, metodoOrdenamiento, cantidadBins);
-        ResultadoBusqueda resultados = buscador.buscar(imagenConsulta, RepoImagenes.getInstance().obtenerImagenes(), cantidadResultados);
-        Busqueda.Presentation.Busqueda.PantallaResultado.Model resultadoModel = new Busqueda.Presentation.Busqueda.PantallaResultado.Model(model.getCurrent(), resultados, model.getMethod());
+        ResultadoBusqueda resultados = buscador.buscar(imagenConsulta, repositorio.obtenerImagenes(), cantidadResultados);
+        if (resultados == null) {
+            throw new ValidacionImagen("La búsqueda no produjo resultados");
+        }
+        model.setMethod(metodoSeleccionado);
+        Busqueda.Presentation.Busqueda.PantallaResultado.Model resultadoModel = new Busqueda.Presentation.Busqueda.PantallaResultado.Model(model.getCurrent(), resultados, metodoSeleccionado);
         Busqueda.Presentation.Busqueda.PantallaResultado.View resultadoView = new Busqueda.Presentation.Busqueda.PantallaResultado.View();
         Busqueda.Presentation.Busqueda.PantallaResultado.Controller resultadoController = new Busqueda.Presentation.Busqueda.PantallaResultado.Controller(resultadoView, resultadoModel);
-        resultadoModel.setCurrent(model.getCurrent());
-        resultadoModel.setMethod(model.getMethod());
-        resultadoModel.setResults(resultados);
-        resultadoView.setVisible(true);
-
+        resultadoController.mostrarResultados(model.getCurrent(), metodoSeleccionado, resultados);
         view.dispose();
     }
 }

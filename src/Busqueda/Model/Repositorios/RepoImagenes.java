@@ -1,15 +1,19 @@
 package Busqueda.Model.Repositorios;
 
 import Busqueda.Model.Estructuras.ColeccionImagenData;
-import Busqueda.Model.Imagen.ImagenData;
 
 public class RepoImagenes {
 
     private static RepoImagenes instancia;
-    ColeccionImagenData coleccion = new ColeccionImagenData();
+
+    private ColeccionImagenData imagenes;
+    private int cantidadBins;
+    private String rutaCarpeta;
+    private String rutaArchivoBinario;
 
     private RepoImagenes() {
-        coleccion = new ColeccionImagenData();
+        imagenes = new ColeccionImagenData();
+        cantidadBins = 0;
     }
 
     public static RepoImagenes getInstance() {
@@ -20,28 +24,47 @@ public class RepoImagenes {
         return instancia;
     }
 
-    public void agregar(ImagenData imagenData) {
-        coleccion.insertarFinal(imagenData);
-    }
-
     public ColeccionImagenData obtenerImagenes() {
-        return coleccion;
+        return imagenes;
     }
 
     public void reemplazar(
-            ColeccionImagenData nuevaColeccion) {
-        if (nuevaColeccion == null) {
-            coleccion = new ColeccionImagenData();
-        } else {
-            coleccion = nuevaColeccion;
+            ColeccionImagenData imagenes,
+            int cantidadBins
+    ) {
+        if (imagenes == null) {
+            throw new IllegalArgumentException(
+                    "La colección de imágenes no puede ser null"
+            );
         }
+
+        if (cantidadBins <= 0) {
+            throw new IllegalArgumentException(
+                    "La cantidad de bins debe ser mayor que cero"
+            );
+        }
+
+        this.imagenes = imagenes;
+        this.cantidadBins = cantidadBins;
     }
 
-    public void limpiar() {
-        coleccion = new ColeccionImagenData();
+    public int getCantidadBins() {
+        return cantidadBins;
     }
 
-    public int cantidad() {
-        return coleccion.tamano();
+    public String getRutaCarpeta() {
+        return rutaCarpeta;
+    }
+
+    public String getRutaArchivoBinario() {
+        return rutaArchivoBinario;
+    }
+
+    public void configurarRutas(
+            String rutaCarpeta,
+            String rutaArchivoBinario
+    ) {
+        this.rutaCarpeta = rutaCarpeta;
+        this.rutaArchivoBinario = rutaArchivoBinario;
     }
 }

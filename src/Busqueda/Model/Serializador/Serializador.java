@@ -52,7 +52,18 @@ public class Serializador {
         ColeccionImagenData coleccion = new ColeccionImagenData();
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(ruta)))) {
 
+            int binsGuardados = in.readInt();
             int cantidadImagenes = in.readInt();
+
+            if (binsGuardados != bins) {
+                throw new IOException(
+                        "El banco de imágenes fue generado con "
+                                + binsGuardados
+                                + " bins, pero se intentó cargar con "
+                                + bins
+                                + " bins"
+                );
+            }
 
             for (int i = 0; i < cantidadImagenes; i++) {
 
@@ -163,9 +174,7 @@ public class Serializador {
         return archivo.exists() && archivo.isFile();
     }
 
-    public int cantidadImagenes(
-            String rutaArchivo
-    ) throws IOException {
+    public int cantidadImagenes(String rutaArchivo) throws IOException {
         if (rutaArchivo == null || rutaArchivo.isBlank()) {
             throw new IllegalArgumentException("La ruta del archivo no puede estar vacía");
         }
