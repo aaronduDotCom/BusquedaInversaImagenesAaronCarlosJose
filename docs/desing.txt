@@ -1,4 +1,4 @@
-Model/
+Busqueda.Model/
     Imagen.java (vector)
     ColeccionImagenes.java (lista doblemente enlazada)
 

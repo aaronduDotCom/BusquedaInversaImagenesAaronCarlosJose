@@ -1,0 +1,32 @@
+package Busqueda.Model.Estructuras;
+
+import Busqueda.Model.Excepciones.FinalDeLista;
+
+public class ListIterator<T> implements Iterator<T>{
+    private Nodo<T> actual;
+
+    public ListIterator(Nodo<T> actual) {
+        this.actual = actual;
+    }
+
+    @Override
+    public boolean hasNext(){
+        return actual != null;
+    }
+
+    @Override
+    public T next(){
+        if (!hasNext()){
+            throw new FinalDeLista("No hay más elementos");
+        }
+        T valor = actual.getValor();
+        actual = actual.getSiguiente();
+        return valor;
+    }
+
+    @Override
+    public T actual () {
+        if (actual == null) return null;
+        return actual.getValor();
+    }
+}
