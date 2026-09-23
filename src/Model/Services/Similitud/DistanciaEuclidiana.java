@@ -47,9 +47,7 @@ public class DistanciaEuclidiana implements MetodoSimilitud {
     @Override
     public void validarImagenes(ImagenData a, ImagenData b, int bins) {
         if (a == null || b == null) {
-            throw new ValidacionImagen(
-                    "Las imágenes no pueden ser null"
-            );
+            throw new ValidacionImagen("Las imágenes no pueden ser null");
         }
 
         if (a.getVector() == null || b.getVector() == null) {

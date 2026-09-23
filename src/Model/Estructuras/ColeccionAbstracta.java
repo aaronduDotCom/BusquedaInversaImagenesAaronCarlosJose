@@ -17,7 +17,6 @@ public abstract class ColeccionAbstracta<T> {
         if (cabeza == null){
             cabeza = Nodo;
             cola = Nodo;
-            return;
         }else{
             Nodo.setSiguiente(cabeza);
             cabeza.setAnterior(Nodo);
@@ -31,7 +30,6 @@ public abstract class ColeccionAbstracta<T> {
         if (cabeza == null){
             cabeza = Nodo;
             cola = Nodo;
-            return;
         }else{
             cola.setSiguiente(Nodo);
             Nodo.setAnterior(cola);

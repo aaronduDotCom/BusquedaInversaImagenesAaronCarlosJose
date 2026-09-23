@@ -1,9 +1,24 @@
 package Presentation.Busqueda;
 
+import Model.Estructuras.ColeccionImagenData;
+import Model.Estructuras.ResultadoBusqueda;
+import Model.Estructuras.Vector;
+import Model.Excepciones.CantidadResultadosInvalida;
 import Model.Excepciones.MetodoBusquedaInvalido;
 import Model.Excepciones.ValidacionImagen;
+import Model.Imagen.HistogramaColor;
 import Model.Imagen.Imagen;
+import Model.Imagen.ImagenData;
+import Model.Repositorios.RepoImagenes;
+import Model.Services.Busqueda.BuscadorInverso;
+import Model.Services.Fabricas.*;
+import Model.Services.Ordenamiento.BubbleSort;
+import Model.Services.Ordenamiento.MergeSort;
+import Model.Services.Ordenamiento.MetodoOrdenamiento;
+import Model.Services.Similitud.MetodoSimilitud;
+
 import java.io.File;
+import java.util.UUID;
 
 public class Controller {
 
@@ -18,6 +33,8 @@ public class Controller {
         view.setModel(model);
 
         cargarMetodosBusqueda();
+        cargarMetodosOrdenamiento();
+        cargarBins();
     }
 
     private void cargarMetodosBusqueda() {
@@ -26,6 +43,25 @@ public class Controller {
         view.getSearchMethodcomboBox().addItem("Similitud Coseno");
         view.getSearchMethodcomboBox().addItem("Similitud Euclidiana");
         view.getSearchMethodcomboBox().addItem("Intersección de Histogramas");
+    }
+
+    private void cargarMetodosOrdenamiento(){
+        view.getComboBoxOrdenamiento().removeAllItems();
+        view.getComboBoxOrdenamiento().addItem("Bubble Sort");
+        view.getComboBoxOrdenamiento().addItem("Merge Sort");
+    }
+
+    public void cargarBins(){
+        view.getComboBoxBins().removeAllItems();
+        view.getComboBoxBins().addItem("2");
+        view.getComboBoxBins().addItem("4");
+        view.getComboBoxBins().addItem("8");
+        view.getComboBoxBins().addItem("16");
+        view.getComboBoxBins().addItem("32");
+        view.getComboBoxBins().addItem("64");
+        view.getComboBoxBins().addItem("128");
+        view.getComboBoxBins().addItem("256");
+
     }
 
     public void selectImage(String path) throws Exception {
@@ -40,24 +76,74 @@ public class Controller {
     }
 
     public void search() throws Exception {
+
+        // aqui se tiene que poner que la cantidad de bins sean las seleccionadas por el usuario
+        String binsSeleccionados = (String) view.getComboBoxBins().getSelectedItem();
+        int cantidadBins = Integer.parseInt(binsSeleccionados);
+
         if (model.getCurrent() == null) {
             throw new ValidacionImagen("Debe seleccionar una imagen antes de buscar");
         }
 
-        String selectedMethod = (String) view.getSearchMethodcomboBox().getSelectedItem();
-        if (selectedMethod == null || selectedMethod.isBlank()) {
+        String metodoSeleccionado = (String) view.getSearchMethodcomboBox().getSelectedItem();
+
+        if (metodoSeleccionado == null || metodoSeleccionado.isBlank()) {
+
             throw new MetodoBusquedaInvalido("Debe seleccionar un método de búsqueda");
         }
 
-        model.setMethod(selectedMethod);
+        String textoCantidad = view.getCantidadResultados().getText().trim();
+        if (textoCantidad.isEmpty()) {
+            throw new CantidadResultadosInvalida("Debe indicar la cantidad de resultados");
+        }
 
-        System.out.println("Imagen seleccionada: " + model.getCurrent().getRuta());
-        System.out.println("Método seleccionado: " + model.getMethod());
+        int cantidadResultados;
 
-        // Pendiente:
-        // 1. Llamar al servicio correspondiente.
-        // 2. Obtener las imágenes similares.
-        // 3. Ordenar los resultados.
-        // 4. Abrir la pantalla de resultados.
+        try {
+            cantidadResultados = Integer.parseInt(textoCantidad);
+
+        } catch (NumberFormatException ex) {
+            throw new CantidadResultadosInvalida("La cantidad de resultados debe ser un número entero");
+        }
+
+        if (cantidadResultados <= 0) {
+            throw new CantidadResultadosInvalida("La cantidad de resultados debe ser mayor que cero");
+        }
+
+        model.setMethod(metodoSeleccionado);
+
+        FabricaSimilitud fabrica;
+        if ("Coseno".equals(metodoSeleccionado)) {
+            fabrica = new FabricaSimilitudCoseno();
+        } else if ("Euclidiana".equals(metodoSeleccionado)) {
+            fabrica = new FabricaSimilitudEuclidiana();
+        } else {
+            fabrica = new FabricaSimilitudInterseccion();
+        }
+        MetodoSimilitud metodoSimilitud = fabrica.crearMetodoSimilitud();
+
+        MetodoOrdenamiento metodoOrdenamiento;
+        String ordenamientoSeleccionado = (String) view.getComboBoxOrdenamiento().getSelectedItem();
+        if ("Merge Sort".equals(ordenamientoSeleccionado)) {
+            metodoOrdenamiento = new MergeSort();
+
+        } else {
+            metodoOrdenamiento = new BubbleSort();
+        }
+
+        HistogramaColor histograma = new HistogramaColor(cantidadBins);
+        Vector<Double> vectorCaracteristico = histograma.calculaVector(model.getCurrent());
+        ImagenData imagenConsulta = new ImagenData(vectorCaracteristico, UUID.randomUUID(), model.getCurrent().getRuta());
+        BuscadorInverso buscador = new BuscadorInverso(metodoSimilitud, metodoOrdenamiento, cantidadBins);
+        ResultadoBusqueda resultados = buscador.buscar(imagenConsulta, RepoImagenes.getInstance().obtenerImagenes(), cantidadResultados);
+        Presentation.Busqueda.PantallaResultado.Model resultadoModel = new Presentation.Busqueda.PantallaResultado.Model(model.getCurrent(), resultados, model.getMethod());
+        Presentation.Busqueda.PantallaResultado.View resultadoView = new Presentation.Busqueda.PantallaResultado.View();
+        Presentation.Busqueda.PantallaResultado.Controller resultadoController = new Presentation.Busqueda.PantallaResultado.Controller(resultadoView, resultadoModel);
+        resultadoModel.setCurrent(model.getCurrent());
+        resultadoModel.setMethod(model.getMethod());
+        resultadoModel.setResults(resultados);
+        resultadoView.setVisible(true);
+
+        view.dispose();
     }
 }

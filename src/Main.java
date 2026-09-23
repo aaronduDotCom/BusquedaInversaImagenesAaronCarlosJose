@@ -1,75 +1,51 @@
-import Model.Imagen.Imagen;
-import Presentation.Busqueda.Controller;
-import Presentation.Busqueda.Model;
-import Presentation.Busqueda.View;
+import Model.Estructuras.ColeccionImagenData;
+import Model.Repositorios.RepoImagenes;
+import Model.Serializador.Serializador;
+
 import javax.swing.*;
+import java.io.File;
 
 public class Main {
 
     public static void main(String[] args) {
-        try {UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");}
-        catch (Exception ex) {};
-        SwingUtilities.invokeLater(() -> {
 
-            try {
-                View view = new View();
-                Model model = new Model();
-                Controller controller = new Controller(view, model);
-                view.setVisible(true);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "No se pudo iniciar la aplicación: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        });
+        try {
 
-        //Prueba abstractores
+            JFileChooser selector = new JFileChooser();
+            selector.setDialogTitle("Seleccione la carpeta del banco de imágenes");
+            selector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int opcion = selector.showOpenDialog(null);
 
-
-        /*
-
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-            } catch (Exception ignored) {
+            if (opcion != JFileChooser.APPROVE_OPTION) {
+                System.exit(0);
             }
 
-            JFrame window = new JFrame("Reservas");
-            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            window.setSize(800, 600);
-            window.setLocationRelativeTo(null);
-            window.setContentPane(new JPanel()); // pantalla vacía
-            window.setVisible(true);
-        });
+            File carpetaSeleccionada = selector.getSelectedFile();
+            Serializador serializador = new Serializador();
+            String rutaBin = new File(carpetaSeleccionada, "banco_indice.bin").getAbsolutePath();
 
+            ColeccionImagenData coleccion;
+            if (serializador.existeBin(rutaBin)) {
+                System.out.println("CACHE HIT: cargando desde " + rutaBin);
+                coleccion = serializador.cargar(rutaBin);
+            } else {
+                System.out.println("CACHE MISS: reprocesando carpeta completa");
+                coleccion = serializador.serializarCarpeta(carpetaSeleccionada.getAbsolutePath(), rutaBin);
+            }
+            RepoImagenes.getInstance().reemplazar(coleccion);
+            //ColeccionImagenData coleccion = serializador.procesarCarpeta(carpetaSeleccionada.getAbsolutePath());
+            // RepoImagenes.getInstance().reemplazar(coleccion);
+            Presentation.Busqueda.Model model = new Presentation.Busqueda.Model();
+            Presentation.Busqueda.View view = new Presentation.Busqueda.View();
+            Presentation.Busqueda.Controller controller = new Presentation.Busqueda.Controller(view, model);
 
-        Vector<String> vector = new Vector<>(3);
+            view.setVisible(true);
+        } catch (Exception ex) {
 
-        System.out.println("=== TEST VECTOR ===");
+            JOptionPane.showMessageDialog(
+                    null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 
-        vector.insertar("Hola");
-        vector.insertar("Mundo");
-        vector.insertar("Java");
-
-        System.out.println("Tamaño: " + vector.tamanno());
-
-        System.out.println("Posición 0: " + vector.getPos(0));
-        System.out.println("Posición 1: " + vector.getPos(1));
-        System.out.println("Posición 2: " + vector.getPos(2));
-
-        System.out.println("\n=== TEST VECTOR ITERATOR ===");
-
-        Iterator<String> iterador = vector.getIterador();
-
-        while (iterador.hasNext()) {
-            System.out.println(iterador.next());
+            System.exit(1);
         }
-
-        System.out.println("\n=== TEST CAPACIDAD ===");
-
-        vector.insertar("Extra");
-
-        System.out.println("Tamaño después de insertar de más: "
-                + vector.tamanno());
-        */
     }
 }

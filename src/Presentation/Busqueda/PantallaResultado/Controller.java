@@ -1,4 +1,4 @@
-package Presentation.Busqueda.Resultado;
+package Presentation.Busqueda.PantallaResultado;
 import Model.Imagen.Imagen;
 import Model.Estructuras.ResultadoBusqueda;
 
@@ -21,8 +21,11 @@ public class Controller {
     }
 
     public void nuevaBusqueda(){
-        model.clear();
-        view.setVisible(false);
+        Presentation.Busqueda.Model nuevoModel = new Presentation.Busqueda.Model();
+        Presentation.Busqueda.View nuevaView = new Presentation.Busqueda.View();
+        Presentation.Busqueda.Controller nuevoController = new Presentation.Busqueda.Controller(nuevaView, nuevoModel);
 
+        nuevaView.setVisible(true);
+        view.dispose();
     }
 }

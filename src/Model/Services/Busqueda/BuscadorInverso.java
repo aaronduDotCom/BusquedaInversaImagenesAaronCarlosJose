@@ -4,10 +4,9 @@ import Model.Estructuras.ColeccionImagenData;
 import Model.Estructuras.Iterator;
 import Model.Estructuras.ResultadoBusqueda;
 import Model.Imagen.ImagenData;
-import Model.Services.Similitud.MetodoSimilitud;
 import Model.Services.Ordenamiento.MetodoOrdenamiento;
+import Model.Services.Similitud.MetodoSimilitud;
 
-// recibe camina por la coleccion de imagenes data y va buscando
 public class BuscadorInverso {
 
     private final MetodoSimilitud metodoSimilitud;
@@ -22,21 +21,34 @@ public class BuscadorInverso {
 
     public void setBins(int bins){this.bins = bins;}
 
-    public ResultadoBusqueda buscar(ImagenData imagenConsulta, ColeccionImagenData coleccion) {
+    public ResultadoBusqueda buscar(ImagenData imagenConsulta, ColeccionImagenData coleccion, int cantidadResultados) {
+
+        if (cantidadResultados > coleccion.tamano()) {
+            cantidadResultados = coleccion.tamano();
+        }
+
         ResultadoBusqueda resultados = new ResultadoBusqueda();
 
         Iterator<ImagenData> iterador = coleccion.getIterador();
+
         while (iterador.hasNext()) {
             ImagenData actual = iterador.next();
-
-            if (actual.getId().equals(imagenConsulta.getId())) {
-                continue; // no comparar la imagen contra si misma
+            if (actual.getRuta().equals(imagenConsulta.getRuta())) {
+                continue;
             }
-
             double valor = metodoSimilitud.calcular(imagenConsulta, actual, bins);
             resultados.agregar(new Resultado(actual, valor));
         }
+        ResultadoBusqueda resultadosOrdenados = metodoOrdenamiento.ordenar(resultados, metodoSimilitud.esAscendente());
 
-        return metodoOrdenamiento.ordenar(resultados, metodoSimilitud.esAscendente());
+        ResultadoBusqueda resultadosFinales = new ResultadoBusqueda();
+        Iterator<Resultado> iteradorResultados = resultadosOrdenados.getIterador();
+        int contador = 0;
+        while (iteradorResultados.hasNext() && contador < cantidadResultados) {
+            resultadosFinales.agregar(iteradorResultados.next());
+            contador++;
+        }
+
+        return resultadosFinales;
     }
 }
