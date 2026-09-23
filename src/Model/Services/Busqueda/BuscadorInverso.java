@@ -12,11 +12,15 @@ public class BuscadorInverso {
 
     private final MetodoSimilitud metodoSimilitud;
     private final MetodoOrdenamiento metodoOrdenamiento;
+    private int bins;
 
-    public BuscadorInverso(MetodoSimilitud metodoSimilitud, MetodoOrdenamiento metodoOrdenamiento) {
+    public BuscadorInverso(MetodoSimilitud metodoSimilitud, MetodoOrdenamiento metodoOrdenamiento, int bins) {
         this.metodoSimilitud = metodoSimilitud;
         this.metodoOrdenamiento = metodoOrdenamiento;
+        this.bins = bins;
     }
+
+    public void setBins(int bins){this.bins = bins;}
 
     public ResultadoBusqueda buscar(ImagenData imagenConsulta, ColeccionImagenData coleccion) {
         ResultadoBusqueda resultados = new ResultadoBusqueda();
@@ -29,7 +33,7 @@ public class BuscadorInverso {
                 continue; // no comparar la imagen contra si misma
             }
 
-            double valor = metodoSimilitud.calcular(imagenConsulta, actual);
+            double valor = metodoSimilitud.calcular(imagenConsulta, actual, bins);
             resultados.agregar(new Resultado(actual, valor));
         }
 

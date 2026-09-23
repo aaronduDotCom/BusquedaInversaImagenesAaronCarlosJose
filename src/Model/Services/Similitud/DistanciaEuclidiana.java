@@ -6,18 +6,18 @@ import Model.Imagen.ImagenData;
 public class DistanciaEuclidiana implements MetodoSimilitud {
 
     @Override
-    public double calcular(ImagenData a, ImagenData b) {
+    public double calcular(ImagenData a, ImagenData b, int bins) {
         //    _____________________
         //   / n
         //  /  E      (A_i - B_i)²
         // v   i = 1
 
-        validarImagenes(a, b);
+        validarImagenes(a, b, bins);
 
         // Sumatoria
         double resultado = 0;
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < bins; i++) {
             double diferencia =
                     a.getVector().getPos(i)
                             - b.getVector().getPos(i);
@@ -44,7 +44,8 @@ public class DistanciaEuclidiana implements MetodoSimilitud {
     }
 
     // esto hay que correrlo a una clase excepcion propia, pero por ahora lo dejo asi
-    private void validarImagenes(ImagenData a, ImagenData b) {
+    @Override
+    public void validarImagenes(ImagenData a, ImagenData b, int bins) {
         if (a == null || b == null) {
             throw new ValidacionImagen(
                     "Las imágenes no pueden ser null"
@@ -59,8 +60,8 @@ public class DistanciaEuclidiana implements MetodoSimilitud {
             throw new ValidacionImagen("Los vectores deben tener el mismo tamaño");
         }
 
-        if (a.getVector().tamanno() != 64) {
-            throw new ValidacionImagen("Los histogramas deben tener 64 posiciones");
+        if (a.getVector().tamanno() != bins) {
+            throw new ValidacionImagen("Los histogramas deben tener " + bins +" posiciones");
         }
     }
 }

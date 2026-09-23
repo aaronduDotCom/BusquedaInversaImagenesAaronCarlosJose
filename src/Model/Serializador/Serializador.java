@@ -10,9 +10,7 @@ import java.io.*;
 import java.util.UUID;
 
 public class Serializador {
-    private static final int TAMANNO_HISTOGRAMA = 64;
-
-    public void guardar(ColeccionImagenData coleccion, String ruta) throws IOException {
+    public void guardar(ColeccionImagenData coleccion, String ruta, int bins) throws IOException {
         try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ruta)))) {
 
             out.writeInt(coleccion.tamano());
@@ -40,7 +38,7 @@ public class Serializador {
             }
         }
 
-    public ColeccionImagenData cargar(String ruta) throws IOException {
+    public ColeccionImagenData cargar(String ruta, int bins) throws IOException {
 
         ColeccionImagenData coleccion = new ColeccionImagenData();
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(ruta)))) {
@@ -53,8 +51,8 @@ public class Serializador {
 
                 String rutaImagen = in.readUTF();
                 int tamannoVector = in.readInt();
-                if (tamannoVector != TAMANNO_HISTOGRAMA) {
-                    throw new IOException("El histograma almacenado debe tener " + TAMANNO_HISTOGRAMA + " posiciones");
+                if (tamannoVector != bins) {
+                    throw new IOException("El histograma almacenado debe tener " + bins + " posiciones");
                 }
                 Vector<Double> vector = new Vector<>(tamannoVector);
                 for (int j = 0; j < tamannoVector; j++) {
@@ -71,7 +69,7 @@ public class Serializador {
         return coleccion;
     }
 
-    public ColeccionImagenData procesarCarpeta(String rutaCarpeta) throws Exception {
+    public ColeccionImagenData procesarCarpeta(String rutaCarpeta, int bins) throws Exception {
 
         if (rutaCarpeta == null || rutaCarpeta.isBlank()) {
             throw new IllegalArgumentException("La ruta de la carpeta no puede estar vacía");
@@ -107,7 +105,7 @@ public class Serializador {
 
             try {
                 Imagen imagen = new Imagen(archivo);
-                Vector<Double> histograma = histogramaColor.calculaVector(imagen);
+                Vector<Double> histograma = histogramaColor.calculaVector(imagen, bins);
                 ImagenData imagenData = new ImagenData(histograma, imagen.getId(), imagen.getRuta());
                 coleccion.insertarFinal(imagenData);
             } catch (IOException e) {
@@ -117,15 +115,15 @@ public class Serializador {
         return coleccion;
     }
 
-    public ColeccionImagenData serializarCarpeta(String rutaCarpeta, String rutaArchivoBinario
+    public ColeccionImagenData serializarCarpeta(String rutaCarpeta, String rutaArchivoBinario, int bins
     ) throws Exception {
 
-        ColeccionImagenData coleccion = procesarCarpeta(rutaCarpeta);
+        ColeccionImagenData coleccion = procesarCarpeta(rutaCarpeta, bins);
         if (coleccion.tamano() == 0) {
             throw new IOException("La carpeta no contiene imágenes válidas");
         }
 
-        guardar(coleccion, rutaArchivoBinario);
+        guardar(coleccion, rutaArchivoBinario, bins);
 
         return coleccion;
     }

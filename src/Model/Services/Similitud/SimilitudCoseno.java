@@ -6,14 +6,14 @@ import Model.Imagen.ImagenData;
 public class SimilitudCoseno implements MetodoSimilitud {
 
     @Override
-    public double calcular(ImagenData a, ImagenData b) {
+    public double calcular(ImagenData a, ImagenData b, int bins) {
         // Entre más cerca de 1, mejor
         //
         //         A · B
         //   ----------------
         //    ||A|| * ||B||
 
-        validarImagenes(a, b);
+        validarImagenes(a, b, bins);
 
         // A · B
         double productoEscalar = 0;
@@ -23,7 +23,7 @@ public class SimilitudCoseno implements MetodoSimilitud {
         double sumaCuadradosA = 0;
         double sumaCuadradosB = 0;
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < bins; i++) {
             double valorA = a.getVector().getPos(i);
             double valorB = b.getVector().getPos(i);
             // Producto escalar A · B
@@ -67,20 +67,24 @@ public class SimilitudCoseno implements MetodoSimilitud {
         return "Similitud Coseno";
     }
 
-    private void validarImagenes(ImagenData a, ImagenData b) {
+    @Override
+    public void validarImagenes(ImagenData a, ImagenData b, int bins) {
         if (a == null || b == null) {
             throw new ValidacionImagen(
                     "Las imágenes no pueden ser null"
             );
         }
+
         if (a.getVector() == null || b.getVector() == null) {
             throw new ValidacionImagen("Los vectores no pueden ser null");
         }
+
         if (a.getVector().tamanno() != b.getVector().tamanno()) {
             throw new ValidacionImagen("Los vectores deben tener el mismo tamaño");
         }
-        if (a.getVector().tamanno() != 64) {
-            throw new ValidacionImagen("Los histogramas deben tener 64 posiciones");
+
+        if (a.getVector().tamanno() != bins) {
+            throw new ValidacionImagen("Los histogramas deben tener " + bins +" posiciones");
         }
     }
 }

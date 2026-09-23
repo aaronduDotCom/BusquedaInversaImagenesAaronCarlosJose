@@ -8,25 +8,18 @@ import Model.Excepciones.CodigoColorInvalido;
 //saca la info de una imagen y devuelve los resultados para crear una imagenData
 
 public class HistogramaColor {
-    public int evaluarPosBin(int color){
-        if(color >= 0 && color <= 63){
-            return 0;
-        }else if(color >= 64 && color <= 127){
-            return 1;
-        }else if(color >= 128 && color <= 191){
-            return 2;
-        }else if(color >= 192 && color <= 255){
-            return 3;
-        } else {
+    public int evaluarPosBin(int color, int bins){
+        if(color >= 0 && color <= 256) {
+            return color/bins;
+        }else
             throw new CodigoColorInvalido("codigo color invalido");
-        }
     }
 
     //Este metodo se usa una vez por imagen
-    public Vector<Double> calculaVector(Imagen imagen){
-        Vector<Integer> vc = new Vector<>(64); // vs = vector conteos
+    public Vector<Double> calculaVector(Imagen imagen, int bins){
+        Vector<Integer> vc = new Vector<>(bins); // vs = vector conteos
         //Inicializamos en 0s
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < bins; i++) {
             vc.insertar(0);
         }
 
@@ -51,9 +44,9 @@ public class HistogramaColor {
                 int blue = color.getBlue();
 
                 //evaluamos posiciones de los pixeles en sus bins
-                int binR = evaluarPosBin(red);
-                int binG = evaluarPosBin(green);
-                int binB = evaluarPosBin(blue);
+                int binR = evaluarPosBin(red,bins);
+                int binG = evaluarPosBin(green,bins);
+                int binB = evaluarPosBin(blue,bins);
 
                 //localizamos el color en el vector caracteristico y lo contamos en el vector
                 int posVector = binR*4*4 + binG*4 + binB*1;
@@ -62,10 +55,10 @@ public class HistogramaColor {
         }
 
         //Creamos un nuevo vector pero es la version normalizada del anterior
-        Vector<Double> vn = new Vector<>(64);
+        Vector<Double> vn = new Vector<>(bins);
         double totalPixeles = (double)width * height;
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < bins; i++) {
             double valor = (double)vc.getPos(i);
             vn.insertar(valor/totalPixeles + 0.0);
         }
